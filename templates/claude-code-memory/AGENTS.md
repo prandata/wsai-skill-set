@@ -1,4 +1,4 @@
-# AGENTS.md — shared instructions for every coding agent
+# AGENTS.md: shared instructions for every coding agent
 
 One file that Codex, Cursor, Gemini CLI and other agents read (https://agents.md).
 Claude Code can read AGENTS.md in place of CLAUDE.md, and the CLAUDE.md here imports it with `@AGENTS.md`,

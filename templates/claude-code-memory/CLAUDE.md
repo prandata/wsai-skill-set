@@ -1,4 +1,4 @@
-# CLAUDE.md — project instructions (keep under 200 lines)
+# CLAUDE.md: project instructions (keep under 200 lines)
 
 Claude Code reads this file at the start of every session. Write down what you'd otherwise re-explain.
 Source: https://code.claude.com/docs/en/memory (checked 31 Oct 2026).
@@ -9,7 +9,7 @@ Source: https://code.claude.com/docs/en/memory (checked 31 Oct 2026).
 
 ## Commands
 - Install: `<e.g. bun install>`
-- Test: `<e.g. bun test>` — run before every commit.
+- Test: `<e.g. bun test>`: run before every commit.
 - Lint/format: `<command>`
 
 ## Rules
