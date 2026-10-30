@@ -38,7 +38,7 @@ tricks:
   check_url: https://gitingest.com/pallets/click
   title: Turn a repo into one text page
   try: gitingest.com/pallets/click
-  reader: Swap hub for ingest. You get a summary, the file tree and every file, ready to paste into your AI.
+  reader: Change github.com to gitingest.com. You get a summary, the file tree and every file, ready to paste into your AI.
 - id: T03
   name: Press `.` on any repo
   category: understand-a-repo

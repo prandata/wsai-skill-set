@@ -19,7 +19,9 @@ SHOT = {"T01": ("shot-gitdiagram.png", "gitdiagram.com draws the architecture of
 def nice(d): return datetime.date.fromisoformat(str(d)).strftime("%-d %b %Y")
 
 def block(n, t):
-    out = [f"#### {n}. {t['title']}.", "", f"`{t['try']}`", "", t["reader"]]
+    url = t["try"] if t["try"].startswith(("http", "curl", "press", "document", "DevTools", "data:", "site:")) else "https://" + t["try"]
+    shown = f"[{t['try']}]({url})" if url.startswith("http") else f"`{t['try']}`"
+    out = [f"#### {n}. {t['title']}.", "", shown, "", t["reader"]]
     if t.get("note"): out += ["", f"=={t['note']}=="]
     if t["id"] in SHOT:
         f, cap = SHOT[t["id"]]; out += ["", f"![{t['title']}](assets/{f})", "", f"Caption: {cap}"]
@@ -37,13 +39,13 @@ def main(issue):
          "You are building with AI.", "", "You open a repo you did not write.", "",
          "You need to understand it in five minutes, not five hours.", "", "Most people clone it, scroll, and give up.", "",
          "You can change one word in the URL instead.", "",
-         "![Five GitHub links from today's Skill Set video](assets/cover.png)", "", "Caption: From today's video. The repo is pallets/click, drawn by gitdiagram.com.", "",
+         "![gitdiagram.com draws an architecture diagram of the pallets/click repo](assets/cover.png)", "", "Caption: From today's video. The repo is pallets/click, drawn by gitdiagram.com.", "",
          f"This issue has =={len(tr)} tested links:== the five from the video, with screenshots, and five more that help when you build with AI.", "",
          "Save it. You will need it the day you open a strange repo.", "", "[[BUTTON: Share]]", "",
          "[[CENTER]] Know a builder who clones whole repos for one file? Send them this.", "", "---", "",
-         "[[CALLOUT]]", "**How this is made.** I write about building with AI: agents, workflows, and what works and what doesn't. "
-         "I can't test all of it alone, so my AI agents help me pull the information together and run the checks. "
-         "I review everything before it's published. The daily videos are AI-made too, because I can't film every one; I step in where it matters. Pranjal", "[[/CALLOUT]]", "",
+         "[[CALLOUT]]", "", "**How this is made.** I write about building with AI: agents, workflows, and what works and what doesn't. "
+         "I can't test all of it alone, so my AI agents help me pull the information together and run the checks.", "",
+         "I review everything before it's published. The daily videos are AI-made too, because I can't film every one; I step in where it matters. Pranjal", "", "[[/CALLOUT]]", "",
          "## How we test.", "", f"Every link was checked on {when} against one public repo, `{D['test_repo']}`. Swap in your own `owner/repo`.", "",
          "==A page loading is not the same as a trick working.== We run each one in a browser before it goes in a video.", "", "---", "",
          "## The five from the video.", ""]
