@@ -1,31 +1,39 @@
 # What Survives in AI: Skill Set
 
-The one source of truth for the tricks in the daily **Skill Set** videos and the What Survives in AI newsletter
-(whatsurvivesinai.substack.com). Mission: help people building with AI tools get ahead.
+**Tested shortcuts and Claude Code skills for people building with AI.** Every trick has a date it was last checked,
+and every claim links to its source. From the [What Survives in AI](https://whatsurvivesinai.substack.com) newsletter.
 
-| File | What it is |
+⭐ Star the repo to get new skills as they land: a new tested trick every day.
+
+## Install a skill (Claude Code)
+
+```bash
+git clone https://github.com/prandata/wsai-skill-set
+cp -r wsai-skill-set/skills/claude-code-memory ~/.claude/skills/
+cp -r wsai-skill-set/skills/wsai-skill-set ~/.claude/skills/ && cp wsai-skill-set/tricks.yaml ~/.claude/skills/wsai-skill-set/
+```
+
+| Skill | What it does |
 |---|---|
-| `tricks.yaml` | Every trick: how, what you get, status, date last checked, caveats, which video used it. |
-| `scripts/verify.py` | Re-checks every link and updates `tricks.yaml` (two failures in a row mark a trick `broken`). |
-| `scripts/build_newsletter.py` | Builds the full-list post from `tricks.yaml` in the newsletter's house format. |
-| `newsletter/full-list.md` | The latest generated post. |
-| `skill/wsai-skill-set/` | A Claude skill: drop it in `~/.claude/skills/` with `tricks.yaml` and your agent can use the list. |
+| [`claude-code-memory`](skills/claude-code-memory/SKILL.md) | Sets up the four files that stop Claude Code forgetting your project: CLAUDE.md, AGENTS.md, a skill, and a hook that blocks dangerous commands. |
+| [`wsai-skill-set`](skills/wsai-skill-set/SKILL.md) | Gives your agent 55+ tested shortcuts: change-one-word GitHub URLs, repo-to-AI-context tools, terminal one-liners. |
 
-## The daily loop
+## Templates
 
-1. **Verify:** `python3 scripts/verify.py` (also runs every morning in GitHub Actions).
-2. **Pick:** choose the day's tricks from `verified` entries not yet in `used_in`, best `punch` first.
-3. **Shoot-day check:** run each chosen trick in a real (headless) browser. A page that loads is not proof it works.
-4. **Video:** make it with the `split-stack-explainer` skill. Then add the slug to `used_in`.
-5. **Newsletter:** `python3 scripts/build_newsletter.py > newsletter/full-list.md`, then stage it in Substack
-   (`substack-staging` skill in whatsurvivesinai-desk). It's published without email; the social posts say
-   "Comment TRICKS and I'll DM you the full list" and link here.
+[`templates/claude-code-memory/`](templates/claude-code-memory/): copy-paste CLAUDE.md, AGENTS.md, SKILL.md and a
+PreToolUse hook (`block-dangerous.sh` blocks `rm -rf /`, force-pushes and reading `.env`; tested).
 
-## Adding a trick
+## The trick list
 
-Add an entry to `tricks.yaml` with `status: partial` and a `check_url`, open a PR, and promote it to `verified` only
-after you have seen the result work in a browser. Every number or claim in `note` needs a source you opened.
+[`tricks.yaml`](tricks.yaml): every trick with how to use it, what you get, status and the date it was last checked.
+A GitHub Action re-checks every link each morning ([`scripts/verify.py`](scripts/verify.py)); two failures in a row
+mark a trick `broken`.
 
-## Status of this repo
+## Contribute
 
-Private for now. Opening it to the public, so readers can star it and send PRs, is the owner's decision.
+Add a trick to `tricks.yaml` with `status: partial` and a `check_url`, and open a PR. We promote it to `verified` once
+we've seen it work in a browser. Claims need a source.
+
+## How this is made
+
+Pranjal writes What Survives in AI. AI agents help gather and check the material; he reviews what's published.
