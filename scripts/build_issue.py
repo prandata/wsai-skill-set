@@ -46,9 +46,9 @@ def main(issue):
          "I review everything before it's published. The daily videos are AI-made too, because I can't film every one; I step in where it matters. Pranjal", "[[/CALLOUT]]", "",
          "## How we test.", "", f"Every link was checked on {when} against one public repo, `{D['test_repo']}`. Swap in your own `owner/repo`.", "",
          "==A page loading is not the same as a trick working.== We run each one in a browser before it goes in a video.", "", "---", "",
-         "## 1. The five from the video.", ""]
+         "## The five from the video.", ""]
     for i, t in enumerate(vid, 1): o += block(i, t)
-    o += ["---", "", "## 2. Five more for AI builders.", "", "Not in the video. Each one saves you time on a repo or an AI task.", ""]
+    o += ["---", "", "## Five more for AI builders.", "", "Not in the video. Each one saves you time on a repo or an AI task.", ""]
     for i, t in enumerate(more, len(vid) + 1): o += block(i, t)
     o += ["---", "", "## What's next.", "",
           f"We have tested {total - len(tr)} more. They come out a few at a time, with a new Skill Set video every day.", "",

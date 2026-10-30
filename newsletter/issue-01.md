@@ -43,7 +43,7 @@ Every link was checked on 30 Oct 2026 against one public repo, `pallets/click`. 
 
 ---
 
-## 1. The five from the video.
+## The five from the video.
 
 #### 1. Diagram any repo.
 
@@ -99,7 +99,7 @@ Caption: Git History: (1) every commit to the README, replayed one by one.
 
 ---
 
-## 2. Five more for AI builders.
+## Five more for AI builders.
 
 Not in the video. Each one saves you time on a repo or an AI task.
 
