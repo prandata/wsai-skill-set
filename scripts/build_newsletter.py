@@ -21,26 +21,29 @@ SECTIONS = [
 def nice(d): return datetime.date.fromisoformat(str(d)).strftime("%-d %b %Y")
 
 def line(t):
-    how = t["how"].replace("->", "→")
-    s = f"- **{t['name']}:** `{how}`. {t['you_get']}."
-    if t.get("sign_in") and not t["sign_in"].lower().startswith("no"):
-        s += f" Sign-in: {t['sign_in']}."
-    if t.get("note"): s += f" =={t['note']}==" if t["id"] == "T09" else f" {t['note']}"
+    s = f"- **#{t['n']} {t['title']}.** `{t['try']}`. {t['reader']}"
+    if t.get("note"): s += f" =={t['note']}=="
     return s
 
 def main():
     tr = D["tricks"]; live = [t for t in tr if t["status"] in ("verified", "behaviour")]
-    out = ["[[META]]", "Title: Links that feel illegal.",
-           f"Subtitle: {len(live)} tricks for people building with AI, each tested on {nice(D['updated'])}:",
+    order = [k for k, _, _ in SECTIONS]; live.sort(key=lambda t: order.index(t["category"]))
+    for i, t in enumerate(live, 1): t["n"] = i
+    SHORT = {'T01': 'gitdiagram', 'T02': 'gitingest', 'T09': 'OSS Insight', 'T04': 'github1s', 'T10': 'Git History'}
+    vid = sorted([t for t in live if "skill-set-01" in t.get("used_in", [])], key=lambda t: list(SHORT).index(t["id"]))
+    for t in vid: t["short"] = SHORT[t["id"]]
+    toc = [f"- **{title.rstrip('.')}:** #{min(t['n'] for t in live if t['category']==k)} to #{max(t['n'] for t in live if t['category']==k)}" for k, title, _ in SECTIONS if any(t['category']==k for t in live)]
+    out = ["[[META]]", f"Title: {len(live)} shortcuts for AI builders.",
+           f"Subtitle: Repos, AI context, terminal and browser tricks. Every one tested on {nice(D['updated'])}.",
            "Audience: everyone", "Email: do not send", "Cover / social image: assets/cover.png", "Tags: skill set, github, tools", "[[/META]]", "",
            "You are building with AI.", "", "You open a repo you did not write.", "",
            "You need to understand it in five minutes, not five hours.", "", "Most people clone it, scroll, and give up.", "",
            "You can change one word in the URL instead.", "",
            "![Five GitHub links from today's Skill Set video](assets/cover.png)", "", "Caption: From today's video. The repo is pallets/click, drawn by gitdiagram.com.", "",
-           f"This is the full Skill Set list: =={len(live)} tricks, every one tested, in one place.==", "",
-           "- **Read any repo fast.** Diagrams, one-file digests, editors in the browser.",
-           "- **Hand it to your AI.** Pack repos and docs so your assistant sees the real thing.",
-           "- **Small tools that save an hour.** Terminal one-liners, JSON, cron, regex.", "",
+           "Today's Skill Set video showed five of these links.", "",
+           f"This post has all of them: =={len(live)} tricks, numbered, every one tested.==", "",
+           "**The five from the video:** " + ", ".join(f"{t['short']} (#{t['n']})" for t in vid) + ". The other " + str(len(live) - len(vid)) + " are new.", "",
+           "**What's inside:**", ""] + toc + ["",
            "Save this post. You will need it the day you open a strange repo.", "", "[[BUTTON: Share]]", "",
            "[[CENTER]] Know a builder who clones whole repos for one file? Send them this.", "", "---", "",
            "## How we test.", "",
@@ -54,7 +57,7 @@ def main():
     nxt = [t for t in tr if t["status"] == "partial"]
     if nxt:
         out += ["---", "", "## Testing next.", "", "These load, but we have not seen the full result work yet. They join the list once we have:", ""]
-        out += [f"- **{t['name']}:** `{t['how'].replace('->', '→')}`." for t in nxt] + [""]
+        out += [f"- **{t['title']}:** `{t['try']}`" for t in nxt] + [""]
     out += ["---", "", "## What's next.", "",
             "A new Skill Set video every day, and this list grows with it.", "",
             "We are also turning the list into a Claude skill, so your agent knows these tricks too.", "",

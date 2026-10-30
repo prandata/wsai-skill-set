@@ -16,6 +16,9 @@ tricks:
   used_in:
   - skill-set-01
   check_url: https://gitdiagram.com/pallets/click
+  title: Diagram any repo
+  try: gitdiagram.com/pallets/click
+  reader: Swap github.com for gitdiagram.com. You get an interactive architecture diagram.
 - id: T02
   name: Repo as one AI-ready text file
   category: understand-a-repo
@@ -31,6 +34,9 @@ tricks:
   used_in:
   - skill-set-01
   check_url: https://gitingest.com/pallets/click
+  title: Turn a repo into one text page
+  try: gitingest.com/pallets/click
+  reader: Swap hub for ingest. You get a summary, the file tree and every file, ready to paste into your AI.
 - id: T03
   name: Press `.` on any repo
   category: understand-a-repo
@@ -45,6 +51,9 @@ tricks:
   hook: Press one key on GitHub.
   used_in: []
   check_url: https://github.dev/pallets/click
+  title: Press . on any repo
+  try: github.dev/pallets/click
+  reader: Pressing the full-stop key on a repo page opens it in VS Code in your browser. Some features need a GitHub sign-in.
 - id: T04
   name: Add "1s"
   category: understand-a-repo
@@ -60,6 +69,9 @@ tricks:
   used_in:
   - skill-set-01
   check_url: https://github1s.com/pallets/click
+  title: Add 1s for an editor
+  try: github1s.com/pallets/click
+  reader: Add 1s after github. The repo opens in VS Code, with no sign-in.
 - id: T05
   name: vscode.dev prefix
   category: understand-a-repo
@@ -74,6 +86,9 @@ tricks:
   hook: Prefix 'vscode.dev/'.
   used_in: []
   check_url: https://vscode.dev/github/pallets/click
+  title: Open a repo in vscode.dev
+  try: vscode.dev/github/pallets/click
+  reader: The same editor, from a URL.
 - id: T06
   name: Swap to gitmcp
   category: feed-your-ai
@@ -88,6 +103,9 @@ tricks:
   hook: Make any repo an MCP server in one word.
   used_in: []
   check_url: https://gitmcp.io/pallets/click
+  title: Make any repo an MCP server
+  try: gitmcp.io/pallets/click
+  reader: Swap github.com for gitmcp.io. You get an MCP address your AI tool can connect to.
 - id: T07
   name: Swap to gitpodcast
   category: feed-your-ai
@@ -102,6 +120,9 @@ tricks:
   hook: Turn a repo into a podcast.
   used_in: []
   check_url: https://gitpodcast.com/pallets/click
+  title: Turn a repo into a podcast
+  try: gitpodcast.com/pallets/click
+  reader: ''
 - id: T08
   name: Count lines of code
   category: feed-your-ai
@@ -116,6 +137,9 @@ tricks:
   hook: How big is this repo really?
   used_in: []
   check_url: https://ghloc.vercel.app/pallets/click
+  title: Count a repo's lines of code
+  try: ghloc.vercel.app/pallets/click
+  reader: ''
 - id: T09
   name: Repo analytics
   category: understand-a-repo
@@ -132,6 +156,9 @@ tricks:
   - skill-set-01
   check_url: https://ossinsight.io/analyze/pallets/click
   note: 'Its own page warns growth figures undercount since March 2026: trust the totals, not the trend lines.'
+  title: See a repo's health
+  try: ossinsight.io/analyze/pallets/click
+  reader: Stars, commits, issues, forks and contributors, charted.
 - id: T10
   name: Animated file history
   category: understand-a-repo
@@ -147,6 +174,9 @@ tricks:
   used_in:
   - skill-set-01
   check_url: https://github.githistory.xyz/pallets/click/blob/main/README.md
+  title: Replay a file's history
+  try: github.githistory.xyz/pallets/click/blob/main/README.md
+  reader: Swap .com for .githistory.xyz on a file link. Every commit plays back like a movie.
 - id: T11
   name: Find the forks that matter
   category: understand-a-repo
@@ -161,7 +191,9 @@ tricks:
   hook: The best version of this repo might be a fork.
   used_in: []
   check_url: https://useful-forks.github.io/?repo=pallets/click
-  note: Without a GitHub token the rate limit is low.
+  title: Find the forks that matter
+  try: useful-forks.github.io/?repo=pallets/click
+  reader: Forks ranked by stars and commits ahead. Sometimes the best version is a fork.
 - id: T12
   name: Download one folder only
   category: understand-a-repo
@@ -176,6 +208,9 @@ tricks:
   hook: Never clone a whole repo for one folder.
   used_in: []
   check_url: https://download-directory.github.io/
+  title: Download one folder
+  try: download-directory.github.io
+  reader: Paste a folder link and get a zip of just that folder.
 - id: T13
   name: .patch on a commit
   category: hidden-github-urls
@@ -190,6 +225,9 @@ tricks:
   hook: Add .patch to any commit.
   used_in: []
   check_url: https://github.com/pallets/click/commit/main.patch
+  title: Add .patch to a commit
+  try: github.com/pallets/click/commit/main.patch
+  reader: The commit as a plain patch.
 - id: T14
   name: .diff on a PR
   category: hidden-github-urls
@@ -204,6 +242,9 @@ tricks:
   hook: Every PR is secretly a text file.
   used_in: []
   check_url: https://github.com/pallets/click/pull/2800.diff
+  title: Add .diff to a pull request
+  try: github.com/pallets/click/pull/2800.diff
+  reader: The whole PR as plain diff text.
 - id: T15
   name: Anyone's SSH keys
   category: hidden-github-urls
@@ -218,7 +259,9 @@ tricks:
   hook: Your SSH keys are public. Add .keys.
   used_in: []
   check_url: https://github.com/torvalds.keys
-  note: Use a person's username; organisations have none.
+  title: Anyone's public SSH keys
+  try: github.com/torvalds.keys
+  reader: Add .keys to a username. Organisations have none.
 - id: T16
   name: Anyone's GPG keys
   category: hidden-github-urls
@@ -233,6 +276,9 @@ tricks:
   hook: Pair it with .keys.
   used_in: []
   check_url: https://github.com/torvalds.gpg
+  title: Anyone's public GPG keys
+  try: github.com/torvalds.gpg
+  reader: Add .gpg to a username.
 - id: T17
   name: Avatar by URL
   category: hidden-github-urls
@@ -247,6 +293,9 @@ tricks:
   hook: Add .png to a username.
   used_in: []
   check_url: https://github.com/torvalds.png
+  title: Anyone's avatar
+  try: github.com/torvalds.png
+  reader: Add .png to a username.
 - id: T18
   name: Blame view
   category: hidden-github-urls
@@ -261,6 +310,9 @@ tricks:
   hook: Find who wrote that line.
   used_in: []
   check_url: https://github.com/pallets/click/blame/main/README.md
+  title: See who wrote each line
+  try: github.com/pallets/click/blame/main/README.md
+  reader: Swap /blob/ for /blame/ in a file link.
 - id: T19
   name: Compare any two tags
   category: hidden-github-urls
@@ -275,6 +327,9 @@ tricks:
   hook: Type three dots into the URL.
   used_in: []
   check_url: https://github.com/pallets/click/compare/8.1.0...8.1.7
+  title: Compare two releases
+  try: github.com/pallets/click/compare/8.1.0...8.1.7
+  reader: Type two tags with three dots between them. You see every change.
 - id: T20
   name: Commit RSS feed
   category: hidden-github-urls
@@ -289,7 +344,9 @@ tricks:
   hook: Follow any repo without a star.
   used_in: []
   check_url: https://github.com/pallets/click/commits/main.atom
-  note: repo.atom gives 404; use /commits/main.atom.
+  title: Follow commits by RSS
+  try: github.com/pallets/click/commits/main.atom
+  reader: An RSS feed of every new commit.
 - id: T21
   name: raw. subdomain
   category: feed-your-ai
@@ -304,6 +361,9 @@ tricks:
   hook: Strip GitHub down to the file.
   used_in: []
   check_url: https://raw.githubusercontent.com/pallets/click/main/README.md
+  title: Get the raw file
+  try: raw.githubusercontent.com/pallets/click/main/README.md
+  reader: Just the file's text. Easy to paste or fetch.
 - id: T22
   name: Any repo file on a CDN
   category: feed-your-ai
@@ -318,6 +378,9 @@ tricks:
   hook: Free CDN for any GitHub file.
   used_in: []
   check_url: https://cdn.jsdelivr.net/gh/pallets/click@main/README.md
+  title: Serve any repo file from a CDN
+  try: cdn.jsdelivr.net/gh/pallets/click@main/README.md
+  reader: Any public file, from a free CDN.
 - id: T23
   name: Repo JSON
   category: feed-your-ai
@@ -332,7 +395,9 @@ tricks:
   hook: Every repo has a JSON twin.
   used_in: []
   check_url: https://api.github.com/repos/pallets/click
-  note: 60 requests an hour without a token.
+  title: Get a repo as JSON
+  try: api.github.com/repos/pallets/click
+  reader: Stars, dates, licence and more, ready for a script.
 - id: T24
   name: Notebook in Colab
   category: notebooks-and-packages
@@ -347,6 +412,9 @@ tricks:
   hook: Change one word to run a notebook.
   used_in: []
   check_url: https://colab.research.google.com/github/googlecolab/colabtools/blob/main/notebooks/colab-github-demo.ipynb
+  title: Run a GitHub notebook in Colab
+  try: colab.research.google.com/github/<owner>/<repo>/blob/main/<file>.ipynb
+  reader: Opens the notebook ready to run. Needs a Google sign-in to run.
 - id: T25
   name: nbviewer
   category: notebooks-and-packages
@@ -361,6 +429,9 @@ tricks:
   hook: When GitHub can't render your notebook.
   used_in: []
   check_url: https://nbviewer.org/github/jupyter/notebook/blob/main/docs/source/examples/Notebook/Running%20Code.ipynb
+  title: View any notebook cleanly
+  try: nbviewer.org/github/<owner>/<repo>/blob/main/<file>.ipynb
+  reader: For when GitHub won't render it.
 - id: T26
   name: Open repo in StackBlitz
   category: notebooks-and-packages
@@ -375,6 +446,9 @@ tricks:
   hook: Run any JS repo with no install.
   used_in: []
   check_url: https://stackblitz.com/github/vitejs/vite
+  title: Run a JS repo in the browser
+  try: stackblitz.com/github/vitejs/vite
+  reader: ''
 - id: T27
   name: Sourcegraph prefix
   category: builder-tools
@@ -389,6 +463,9 @@ tricks:
   hook: Search a repo like Google.
   used_in: []
   check_url: https://sourcegraph.com/github.com/pallets/click
+  title: Search code with Sourcegraph
+  try: sourcegraph.com/github.com/pallets/click
+  reader: ''
 - id: T28
   name: Context7
   category: feed-your-ai
@@ -403,6 +480,9 @@ tricks:
   hook: Stop your AI using old docs.
   used_in: []
   check_url: https://context7.com/pallets/click
+  title: Current docs for your AI
+  try: context7.com/pallets/click
+  reader: Up-to-date library docs, with an llms.txt version for AI tools.
 - id: T29
   name: Repomix web
   category: feed-your-ai
@@ -417,6 +497,9 @@ tricks:
   hook: Gitingest's rival.
   used_in: []
   check_url: https://repomix.com
+  title: Pack a repo for AI with Repomix
+  try: repomix.com
+  reader: Paste a repo URL and get one AI-ready file.
 - id: T30
   name: repo2txt
   category: feed-your-ai
@@ -431,6 +514,9 @@ tricks:
   hook: Choose exactly which files go to the AI.
   used_in: []
   check_url: https://repo2txt.simplebasedomain.com
+  title: Choose which files your AI sees
+  try: repo2txt.simplebasedomain.com
+  reader: Tick the files you want and get one text file.
 - id: T31
   name: Package-size truth
   category: notebooks-and-packages
@@ -445,6 +531,9 @@ tricks:
   hook: How heavy is that npm package?
   used_in: []
   check_url: https://bundlephobia.com/package/react
+  title: Check a package's size
+  try: bundlephobia.com/package/react
+  reader: How much an npm package adds to your app.
 - id: T32
   name: npm dependency graph
   category: notebooks-and-packages
@@ -459,6 +548,9 @@ tricks:
   hook: See everything you install.
   used_in: []
   check_url: https://npmgraph.js.org/?q=react
+  title: See an npm dependency graph
+  try: npmgraph.js.org/?q=react
+  reader: ''
 - id: T33
   name: deps.dev
   category: notebooks-and-packages
@@ -473,6 +565,9 @@ tricks:
   hook: Google's free dependency X-ray.
   used_in: []
   check_url: https://deps.dev/pypi/click
+  title: X-ray a package
+  try: deps.dev/pypi/click
+  reader: Dependencies, licences and security advisories.
 - id: T34
   name: PyPI JSON
   category: notebooks-and-packages
@@ -487,6 +582,9 @@ tricks:
   hook: Add /json to PyPI.
   used_in: []
   check_url: https://pypi.org/pypi/click/json
+  title: Any Python package as JSON
+  try: pypi.org/pypi/click/json
+  reader: Latest version and metadata.
 - id: T35
   name: Explain any command
   category: terminal
@@ -501,6 +599,9 @@ tricks:
   hook: Never google a tar flag again.
   used_in: []
   check_url: https://explainshell.com/explain?cmd=tar+-xzvf+a.tgz
+  title: Explain any shell command
+  try: explainshell.com/explain?cmd=tar+-xzvf+a.tgz
+  reader: Every flag, labelled.
 - id: T36
   name: cheat.sh in the terminal
   category: terminal
@@ -515,6 +616,9 @@ tricks:
   hook: Help for any command in one curl.
   used_in: []
   check_url: https://cheat.sh/tar
+  title: Examples for any command
+  try: curl cheat.sh/tar
+  reader: Ready-to-copy examples in your terminal.
 - id: T37
   name: Weather in the terminal
   category: terminal
@@ -529,6 +633,9 @@ tricks:
   hook: Your terminal has weather.
   used_in: []
   check_url: https://wttr.in/Sydney
+  title: Weather in the terminal
+  try: curl wttr.in/Sydney
+  reader: A forecast as text art.
 - id: T38
   name: QR code in the terminal
   category: terminal
@@ -543,6 +650,9 @@ tricks:
   hook: Make a QR code with curl.
   used_in: []
   check_url: https://qrenco.de/github.com
+  title: QR code in the terminal
+  try: curl qrenco.de/github.com
+  reader: A scannable QR code for any link.
 - id: T39
   name: Dancing parrot
   category: terminal
@@ -557,6 +667,9 @@ tricks:
   hook: The silliest curl.
   used_in: []
   check_url: https://parrot.live
+  title: A dancing parrot
+  try: curl parrot.live
+  reader: No reason. Just joy. Press Ctrl+C to stop.
 - id: T40
   name: Crypto rates in the terminal
   category: terminal
@@ -571,6 +684,9 @@ tricks:
   hook: A Bloomberg terminal for free.
   used_in: []
   check_url: https://rate.sx/btc
+  title: Crypto prices in the terminal
+  try: curl rate.sx/btc
+  reader: A price chart as text.
 - id: T41
   name: HTTP cats
   category: builder-tools
@@ -585,6 +701,9 @@ tricks:
   hook: Learn status codes with cats.
   used_in: []
   check_url: https://http.cat/404
+  title: A cat for every HTTP status
+  try: http.cat/404
+  reader: The easiest way to remember status codes.
 - id: T42
   name: Wayback prefix
   category: builder-tools
@@ -599,6 +718,9 @@ tricks:
   hook: See any site 15 years ago.
   used_in: []
   check_url: https://web.archive.org/web/2010/github.com
+  title: See any site years ago
+  try: web.archive.org/web/2010/github.com
+  reader: GitHub as it looked in 2010.
 - id: T43
   name: Contribution chart image
   category: hidden-github-urls
@@ -613,6 +735,9 @@ tricks:
   hook: Embed your GitHub streak anywhere.
   used_in: []
   check_url: https://ghchart.rshah.org/torvalds
+  title: Your contribution chart as an image
+  try: ghchart.rshah.org/torvalds
+  reader: The green-square chart as an SVG you can embed.
 - id: T44
   name: Cron, explained
   category: builder-tools
@@ -627,6 +752,9 @@ tricks:
   hook: Cron is unreadable. Fix it.
   used_in: []
   check_url: https://crontab.guru/
+  title: Read a cron schedule
+  try: crontab.guru
+  reader: Type a cron line and read it in plain English.
 - id: T45
   name: JSON as a graph
   category: builder-tools
@@ -641,6 +769,9 @@ tricks:
   hook: JSON you can actually read.
   used_in: []
   check_url: https://jsoncrack.com/editor
+  title: See JSON as a graph
+  try: jsoncrack.com/editor
+  reader: Paste JSON and get a map you can read.
 - id: T46
   name: Code screenshot
   category: builder-tools
@@ -655,6 +786,9 @@ tricks:
   hook: Why your code screenshots look ugly.
   used_in: []
   check_url: https://carbon.now.sh
+  title: Good-looking code screenshots
+  try: carbon.now.sh
+  reader: Or ray.so. Clean images of your code.
 - id: T47
   name: Live Mermaid
   category: builder-tools
@@ -669,6 +803,9 @@ tricks:
   hook: Draw diagrams by typing.
   used_in: []
   check_url: https://mermaid.live
+  title: Diagrams by typing
+  try: mermaid.live
+  reader: Type text, get a diagram, live.
 - id: T48
   name: transform.tools
   category: builder-tools
@@ -683,6 +820,9 @@ tricks:
   hook: Stop writing types by hand.
   used_in: []
   check_url: https://transform.tools
+  title: JSON to types
+  try: transform.tools
+  reader: JSON to TypeScript or Zod as you type.
 - id: T49
   name: regex101
   category: builder-tools
@@ -697,6 +837,9 @@ tricks:
   hook: Regex, explained live.
   used_in: []
   check_url: https://regex101.com
+  title: Test a regex
+  try: regex101.com
+  reader: Matches highlighted and explained.
 - id: T50
   name: caniuse
   category: builder-tools
@@ -711,6 +854,9 @@ tricks:
   hook: Does it work in Safari?
   used_in: []
   check_url: https://caniuse.com/css-has
+  title: Does it work in Safari?
+  try: caniuse.com/css-has
+  reader: Browser support for any web feature.
 - id: T51
   name: PageSpeed
   category: builder-tools
@@ -725,6 +871,9 @@ tricks:
   hook: Grade any website in 10 seconds.
   used_in: []
   check_url: https://pagespeed.web.dev
+  title: Grade a site's speed
+  try: pagespeed.web.dev
+  reader: Lighthouse scores for any URL.
 - id: T52
   name: Free private AI chat
   category: builder-tools
@@ -739,6 +888,9 @@ tricks:
   hook: Free GPT with no login.
   used_in: []
   check_url: https://duck.ai
+  title: Free AI chat, no account
+  try: duck.ai
+  reader: Several models, no sign-in.
 - id: T53
   name: HuggingChat
   category: builder-tools
@@ -753,6 +905,9 @@ tricks:
   hook: Chat with open-source AI.
   used_in: []
   check_url: https://huggingface.co/chat
+  title: Open-source AI chat
+  try: huggingface.co/chat
+  reader: Open models in a chat. Some features need a sign-in.
 - id: T54
   name: Google's Code Wiki
   category: feed-your-ai
@@ -767,6 +922,9 @@ tricks:
   hook: Google's answer to DeepWiki.
   used_in: []
   check_url: https://codewiki.google/github.com/pallets/click
+  title: Google's Code Wiki for a repo
+  try: codewiki.google/github.com/pallets/click
+  reader: ''
 - id: T55
   name: 'DevTools: `document.designMode="on"`'
   category: browser
@@ -781,6 +939,9 @@ tricks:
   hook: Edit any website.
   used_in: []
   check_url: null
+  title: Edit any web page
+  try: document.designMode = "on"
+  reader: Paste into the browser console, then type on the page. Good for mock-ups.
 - id: T56
   name: 'DevTools: Ctrl+Shift+P > "Capture full size screenshot"'
   category: browser
@@ -795,6 +956,9 @@ tricks:
   hook: A full-page screenshot without an extension.
   used_in: []
   check_url: null
+  title: Full-page screenshot
+  try: DevTools → Cmd+Shift+P → "Capture full size screenshot"
+  reader: A full-page image with no extension.
 - id: T57
   name: 'Address bar: `data:text/html,<h1 contenteditable>`'
   category: browser
@@ -809,6 +973,9 @@ tricks:
   hook: A notepad from the URL bar.
   used_in: []
   check_url: null
+  title: A notepad in the address bar
+  try: data:text/html,<h1 contenteditable>
+  reader: Type it into the address bar for an instant notepad.
 - id: T58
   name: Google `site:github.com "awesome" filetype:md`
   category: browser
@@ -823,6 +990,9 @@ tricks:
   hook: Google like a dev.
   used_in: []
   check_url: null
+  title: Find curated lists with Google
+  try: site:github.com "awesome" filetype:md
+  reader: Search operators that surface hand-picked lists.
 - id: T59
   name: Press `t` on a repo (file finder), `y` (permalink)
   category: hidden-github-urls
@@ -837,6 +1007,9 @@ tricks:
   hook: GitHub has hidden hotkeys.
   used_in: []
   check_url: null
+  title: GitHub's hidden hotkeys
+  try: press t, then y, on a repo page
+  reader: t opens a file finder. y turns the URL into a permanent link.
 - id: T60
   name: Live HTTP client
   category: builder-tools
@@ -851,6 +1024,9 @@ tricks:
   hook: Postman without installing Postman.
   used_in: []
   check_url: https://hoppscotch.io
+  title: An API client in a tab
+  try: hoppscotch.io
+  reader: Send requests without installing anything.
 - id: T61
   name: Excalidraw
   category: builder-tools
@@ -865,3 +1041,6 @@ tricks:
   hook: Whiteboard by URL.
   used_in: []
   check_url: https://excalidraw.com
+  title: A whiteboard by URL
+  try: excalidraw.com
+  reader: Hand-drawn diagrams, free.
