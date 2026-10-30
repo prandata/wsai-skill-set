@@ -101,7 +101,7 @@ Caption: Git History: (1) every commit to the README, replayed one by one.
 
 ## 2. Five more for AI builders.
 
-Not in the video. Each one gives your AI better context or saves you a clone.
+Not in the video. Each one saves you time on a repo or an AI task.
 
 #### 6. Press . on any repo.
 
@@ -139,7 +139,7 @@ Every flag, labelled.
 
 We have tested 45 more. They come out a few at a time, with a new Skill Set video every day.
 
-On the video, comment TRICKS and I'll DM you the next batch first.
+Got here from a video? That is how it works: comment TRICKS on any Skill Set video and I'll DM you that day's list.
 
 Here, comment with the trick you use most. The best ones go in the next issue.
 

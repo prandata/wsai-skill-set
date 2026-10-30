@@ -48,11 +48,11 @@ def main(issue):
          "==A page loading is not the same as a trick working.== We run each one in a browser before it goes in a video.", "", "---", "",
          "## 1. The five from the video.", ""]
     for i, t in enumerate(vid, 1): o += block(i, t)
-    o += ["---", "", "## 2. Five more for AI builders.", "", "Not in the video. Each one gives your AI better context or saves you a clone.", ""]
+    o += ["---", "", "## 2. Five more for AI builders.", "", "Not in the video. Each one saves you time on a repo or an AI task.", ""]
     for i, t in enumerate(more, len(vid) + 1): o += block(i, t)
     o += ["---", "", "## What's next.", "",
           f"We have tested {total - len(tr)} more. They come out a few at a time, with a new Skill Set video every day.", "",
-          "On the video, comment TRICKS and I'll DM you the next batch first.", "",
+          "Got here from a video? That is how it works: comment TRICKS on any Skill Set video and I'll DM you that day's list.", "",
           "Here, comment with the trick you use most. The best ones go in the next issue.", "", "[[BUTTON: Comment]]", "",
           "[[BUTTON: Subscribe]]", "", "[[CENTER]] Free while we grow. Tested, dated, no affiliate links.", ""]
     print("\n".join(o))
