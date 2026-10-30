@@ -1,0 +1,867 @@
+updated: '2026-10-30'
+test_repo: pallets/click
+tricks:
+- id: T01
+  name: 'Change one word: diagram the repo'
+  category: understand-a-repo
+  how: github.com/pallets/click -> gitdiagram.com/pallets/click
+  you_get: An interactive architecture diagram
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200, title "architecture diagram"
+  sign_in: 'no'
+  novelty: overused
+  punch: 5
+  hook: Swap 'hub' for 'diagram'.
+  used_in:
+  - skill-set-01
+  check_url: https://gitdiagram.com/pallets/click
+- id: T02
+  name: Repo as one AI-ready text file
+  category: understand-a-repo
+  how: github.com/... -> gitingest.com/pallets/click
+  you_get: Token count plus a full text digest
+  status: verified
+  checked: '2026-10-30'
+  evidence: 'yes, 30 Oct, API JSON: 166 files, 220.1k tokens'
+  sign_in: 'no'
+  novelty: overused
+  punch: 4
+  hook: Paste a whole repo into ChatGPT.
+  used_in:
+  - skill-set-01
+  check_url: https://gitingest.com/pallets/click
+- id: T03
+  name: Press `.` on any repo
+  category: understand-a-repo
+  how: github.com/pallets/click -> github.dev/pallets/click
+  you_get: Full VS Code in the tab
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200 (342 KB app)
+  sign_in: GitHub login for some features; browsing works
+  novelty: known
+  punch: 5
+  hook: Press one key on GitHub.
+  used_in: []
+  check_url: https://github.dev/pallets/click
+- id: T04
+  name: Add "1s"
+  category: understand-a-repo
+  how: github.com -> github1s.com/pallets/click
+  you_get: VS Code without any login
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200, title GitHub1s
+  sign_in: 'no'
+  novelty: known
+  punch: 4
+  hook: Add '1s' and GitHub becomes an IDE.
+  used_in:
+  - skill-set-01
+  check_url: https://github1s.com/pallets/click
+- id: T05
+  name: vscode.dev prefix
+  category: understand-a-repo
+  how: vscode.dev/github/pallets/click
+  you_get: VS Code from a URL
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: no to browse
+  novelty: known
+  punch: 4
+  hook: Prefix 'vscode.dev/'.
+  used_in: []
+  check_url: https://vscode.dev/github/pallets/click
+- id: T06
+  name: Swap to gitmcp
+  category: feed-your-ai
+  how: github.com -> gitmcp.io/pallets/click
+  you_get: An MCP server URL for any repo, plus a chat
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200, page lists the endpoint
+  sign_in: 'no'
+  novelty: fresh
+  punch: 3
+  hook: Make any repo an MCP server in one word.
+  used_in: []
+  check_url: https://gitmcp.io/pallets/click
+- id: T07
+  name: Swap to gitpodcast
+  category: feed-your-ai
+  how: github.com -> gitpodcast.com/pallets/click
+  you_get: An audio podcast about the repo
+  status: partial
+  checked: '2026-10-30'
+  evidence: partial, 30 Oct, curl 200 page; audio generation not run
+  sign_in: unclear
+  novelty: fresh
+  punch: 4
+  hook: Turn a repo into a podcast.
+  used_in: []
+  check_url: https://gitpodcast.com/pallets/click
+- id: T08
+  name: Count lines of code
+  category: feed-your-ai
+  how: ghloc.vercel.app/pallets/click
+  you_get: Lines-of-code tree per folder
+  status: partial
+  checked: '2026-10-30'
+  evidence: partial, 30 Oct, curl 200 page; its API returned 401 to curl, so check rendering
+  sign_in: 'no'
+  novelty: fresh
+  punch: 3
+  hook: How big is this repo really?
+  used_in: []
+  check_url: https://ghloc.vercel.app/pallets/click
+- id: T09
+  name: Repo analytics
+  category: understand-a-repo
+  how: ossinsight.io/analyze/pallets/click
+  you_get: Stars and contributor charts, world map
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200, title "Analyze pallets/click"
+  sign_in: 'no'
+  novelty: fresh
+  punch: 5
+  hook: The repo dashboard GitHub hides.
+  used_in:
+  - skill-set-01
+  check_url: https://ossinsight.io/analyze/pallets/click
+  note: 'Its own page warns growth figures undercount since March 2026: trust the totals, not the trend lines.'
+- id: T10
+  name: Animated file history
+  category: understand-a-repo
+  how: github.com/... -> github.githistory.xyz/pallets/click/blob/main/README.md
+  you_get: Commits sliding in as an animation
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200, title Git History
+  sign_in: 'no'
+  novelty: known
+  punch: 5
+  hook: Add 'githistory.xyz' and watch a file evolve.
+  used_in:
+  - skill-set-01
+  check_url: https://github.githistory.xyz/pallets/click/blob/main/README.md
+- id: T11
+  name: Find the forks that matter
+  category: understand-a-repo
+  how: useful-forks.github.io/?repo=pallets/click
+  you_get: Forks ranked by stars and commits ahead
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: no (low rate limit without a token)
+  novelty: fresh
+  punch: 3
+  hook: The best version of this repo might be a fork.
+  used_in: []
+  check_url: https://useful-forks.github.io/?repo=pallets/click
+  note: Without a GitHub token the rate limit is low.
+- id: T12
+  name: Download one folder only
+  category: understand-a-repo
+  how: download-directory.github.io/?url=<folder url>
+  you_get: A zip of a single folder
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 3
+  hook: Never clone a whole repo for one folder.
+  used_in: []
+  check_url: https://download-directory.github.io/
+- id: T13
+  name: .patch on a commit
+  category: hidden-github-urls
+  how: '.../commit/main -> .../commit/main.patch'
+  you_get: A raw email-style patch
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200, "From 9f0bcdf..."
+  sign_in: 'no'
+  novelty: known
+  punch: 3
+  hook: Add .patch to any commit.
+  used_in: []
+  check_url: https://github.com/pallets/click/commit/main.patch
+- id: T14
+  name: .diff on a PR
+  category: hidden-github-urls
+  how: '.../pull/2800 -> .../pull/2800.diff'
+  you_get: Plain diff text
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 3
+  hook: Every PR is secretly a text file.
+  used_in: []
+  check_url: https://github.com/pallets/click/pull/2800.diff
+- id: T15
+  name: Anyone's SSH keys
+  category: hidden-github-urls
+  how: github.com/<user>.keys
+  you_get: The user's public SSH keys
+  status: verified
+  checked: '2026-10-30'
+  evidence: 'yes, 30 Oct, curl 200 (pallets org: empty; use a person)'
+  sign_in: 'no'
+  novelty: fresh
+  punch: 4
+  hook: Your SSH keys are public. Add .keys.
+  used_in: []
+  check_url: https://github.com/torvalds.keys
+  note: Use a person's username; organisations have none.
+- id: T16
+  name: Anyone's GPG keys
+  category: hidden-github-urls
+  how: github.com/torvalds.gpg
+  you_get: 'PGP block (torvalds: "no GPG keys")'
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: fresh
+  punch: 3
+  hook: Pair it with .keys.
+  used_in: []
+  check_url: https://github.com/torvalds.gpg
+- id: T17
+  name: Avatar by URL
+  category: hidden-github-urls
+  how: github.com/torvalds.png
+  you_get: The avatar image
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200, 28 KB
+  sign_in: 'no'
+  novelty: known
+  punch: 2
+  hook: Add .png to a username.
+  used_in: []
+  check_url: https://github.com/torvalds.png
+- id: T18
+  name: Blame view
+  category: hidden-github-urls
+  how: '.../blob/main/README.md -> .../blame/main/README.md'
+  you_get: Who wrote every line
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 3
+  hook: Find who wrote that line.
+  used_in: []
+  check_url: https://github.com/pallets/click/blame/main/README.md
+- id: T19
+  name: Compare any two tags
+  category: hidden-github-urls
+  how: '.../compare/8.1.0...8.1.7'
+  you_get: Every change between releases
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 3
+  hook: Type three dots into the URL.
+  used_in: []
+  check_url: https://github.com/pallets/click/compare/8.1.0...8.1.7
+- id: T20
+  name: Commit RSS feed
+  category: hidden-github-urls
+  how: '.../commits/main.atom (repo.atom gives 404)'
+  you_get: An RSS feed of commits
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 2
+  hook: Follow any repo without a star.
+  used_in: []
+  check_url: https://github.com/pallets/click/commits/main.atom
+  note: repo.atom gives 404; use /commits/main.atom.
+- id: T21
+  name: raw. subdomain
+  category: feed-your-ai
+  how: github.com/.../blob/... -> raw.githubusercontent.com/pallets/click/main/README.md
+  you_get: Bare file text
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 2
+  hook: Strip GitHub down to the file.
+  used_in: []
+  check_url: https://raw.githubusercontent.com/pallets/click/main/README.md
+- id: T22
+  name: Any repo file on a CDN
+  category: feed-your-ai
+  how: cdn.jsdelivr.net/gh/pallets/click@main/README.md
+  you_get: The file served from a CDN
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 3
+  hook: Free CDN for any GitHub file.
+  used_in: []
+  check_url: https://cdn.jsdelivr.net/gh/pallets/click@main/README.md
+- id: T23
+  name: Repo JSON
+  category: feed-your-ai
+  how: api.github.com/repos/pallets/click
+  you_get: Stars (17,805), creation date, everything
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: no (60 requests/hr)
+  novelty: known
+  punch: 3
+  hook: Every repo has a JSON twin.
+  used_in: []
+  check_url: https://api.github.com/repos/pallets/click
+  note: 60 requests an hour without a token.
+- id: T24
+  name: Notebook in Colab
+  category: notebooks-and-packages
+  how: github.com/... .ipynb -> colab.research.google.com/github/...
+  you_get: The notebook, ready to run
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200 page
+  sign_in: Google login to run
+  novelty: known
+  punch: 4
+  hook: Change one word to run a notebook.
+  used_in: []
+  check_url: https://colab.research.google.com/github/googlecolab/colabtools/blob/main/notebooks/colab-github-demo.ipynb
+- id: T25
+  name: nbviewer
+  category: notebooks-and-packages
+  how: nbviewer.org/github/...
+  you_get: A clean rendered notebook
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 2
+  hook: When GitHub can't render your notebook.
+  used_in: []
+  check_url: https://nbviewer.org/github/jupyter/notebook/blob/main/docs/source/examples/Notebook/Running%20Code.ipynb
+- id: T26
+  name: Open repo in StackBlitz
+  category: notebooks-and-packages
+  how: stackblitz.com/github/<owner>/<repo>
+  you_get: A running dev environment (JS repos)
+  status: partial
+  checked: '2026-10-30'
+  evidence: partial, 30 Oct, curl 200; demo on a JS repo
+  sign_in: 'no'
+  novelty: known
+  punch: 4
+  hook: Run any JS repo with no install.
+  used_in: []
+  check_url: https://stackblitz.com/github/vitejs/vite
+- id: T27
+  name: Sourcegraph prefix
+  category: builder-tools
+  how: sourcegraph.com/github.com/pallets/click
+  you_get: Code browser with search
+  status: partial
+  checked: '2026-10-30'
+  evidence: partial, 30 Oct, curl 200; public search scope may have changed, check
+  sign_in: maybe
+  novelty: known
+  punch: 2
+  hook: Search a repo like Google.
+  used_in: []
+  check_url: https://sourcegraph.com/github.com/pallets/click
+- id: T28
+  name: Context7
+  category: feed-your-ai
+  how: context7.com/pallets/click (+ /llms.txt)
+  you_get: Up-to-date docs for an LLM
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200 both
+  sign_in: 'no'
+  novelty: fresh
+  punch: 3
+  hook: Stop your AI using old docs.
+  used_in: []
+  check_url: https://context7.com/pallets/click
+- id: T29
+  name: Repomix web
+  category: feed-your-ai
+  how: repomix.com, paste the repo URL
+  you_get: Repo packed into one AI file
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200 page
+  sign_in: 'no'
+  novelty: known
+  punch: 3
+  hook: Gitingest's rival.
+  used_in: []
+  check_url: https://repomix.com
+- id: T30
+  name: repo2txt
+  category: feed-your-ai
+  how: repo2txt.simplebasedomain.com
+  you_get: Pick files, get one text file
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: fresh
+  punch: 2
+  hook: Choose exactly which files go to the AI.
+  used_in: []
+  check_url: https://repo2txt.simplebasedomain.com
+- id: T31
+  name: Package-size truth
+  category: notebooks-and-packages
+  how: bundlephobia.com/package/react
+  you_get: Bundle size and download time
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 3
+  hook: How heavy is that npm package?
+  used_in: []
+  check_url: https://bundlephobia.com/package/react
+- id: T32
+  name: npm dependency graph
+  category: notebooks-and-packages
+  how: npmgraph.js.org/?q=react
+  you_get: A dependency graph
+  status: partial
+  checked: '2026-10-30'
+  evidence: partial, 30 Oct, curl 200 (SPA)
+  sign_in: 'no'
+  novelty: fresh
+  punch: 4
+  hook: See everything you install.
+  used_in: []
+  check_url: https://npmgraph.js.org/?q=react
+- id: T33
+  name: deps.dev
+  category: notebooks-and-packages
+  how: deps.dev/pypi/click
+  you_get: Dependencies, licences, advisories
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: fresh
+  punch: 3
+  hook: Google's free dependency X-ray.
+  used_in: []
+  check_url: https://deps.dev/pypi/click
+- id: T34
+  name: PyPI JSON
+  category: notebooks-and-packages
+  how: pypi.org/pypi/click/json
+  you_get: Latest version (8.5.0) as JSON
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: fresh
+  punch: 2
+  hook: Add /json to PyPI.
+  used_in: []
+  check_url: https://pypi.org/pypi/click/json
+- id: T35
+  name: Explain any command
+  category: terminal
+  how: explainshell.com/explain?cmd=tar+-xzvf+a.tgz
+  you_get: Each flag labelled
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200, text matched
+  sign_in: 'no'
+  novelty: known
+  punch: 4
+  hook: Never google a tar flag again.
+  used_in: []
+  check_url: https://explainshell.com/explain?cmd=tar+-xzvf+a.tgz
+- id: T36
+  name: cheat.sh in the terminal
+  category: terminal
+  how: curl cheat.sh/tar
+  you_get: Instant tar examples
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl output
+  sign_in: 'no'
+  novelty: known
+  punch: 4
+  hook: Help for any command in one curl.
+  used_in: []
+  check_url: https://cheat.sh/tar
+- id: T37
+  name: Weather in the terminal
+  category: terminal
+  how: curl wttr.in/Sydney
+  you_get: ASCII weather art
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, output "Overcast +20 °C"
+  sign_in: 'no'
+  novelty: overused
+  punch: 5
+  hook: Your terminal has weather.
+  used_in: []
+  check_url: https://wttr.in/Sydney
+- id: T38
+  name: QR code in the terminal
+  category: terminal
+  how: curl qrenco.de/github.com
+  you_get: A scannable QR code in text
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, output is QR blocks
+  sign_in: 'no'
+  novelty: fresh
+  punch: 5
+  hook: Make a QR code with curl.
+  used_in: []
+  check_url: https://qrenco.de/github.com
+- id: T39
+  name: Dancing parrot
+  category: terminal
+  how: curl parrot.live
+  you_get: Animated party parrot
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, stream started
+  sign_in: 'no'
+  novelty: known
+  punch: 5
+  hook: The silliest curl.
+  used_in: []
+  check_url: https://parrot.live
+- id: T40
+  name: Crypto rates in the terminal
+  category: terminal
+  how: curl rate.sx/btc
+  you_get: ASCII price chart
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: fresh
+  punch: 4
+  hook: A Bloomberg terminal for free.
+  used_in: []
+  check_url: https://rate.sx/btc
+- id: T41
+  name: HTTP cats
+  category: builder-tools
+  how: http.cat/404
+  you_get: A cat photo for each status code
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200, image/jpeg
+  sign_in: 'no'
+  novelty: known
+  punch: 4
+  hook: Learn status codes with cats.
+  used_in: []
+  check_url: https://http.cat/404
+- id: T42
+  name: Wayback prefix
+  category: builder-tools
+  how: web.archive.org/web/2010/github.com
+  you_get: GitHub in 2010
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 5
+  hook: See any site 15 years ago.
+  used_in: []
+  check_url: https://web.archive.org/web/2010/github.com
+- id: T43
+  name: Contribution chart image
+  category: hidden-github-urls
+  how: ghchart.rshah.org/torvalds
+  you_get: The green-square graph as an SVG
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: fresh
+  punch: 3
+  hook: Embed your GitHub streak anywhere.
+  used_in: []
+  check_url: https://ghchart.rshah.org/torvalds
+- id: T44
+  name: Cron, explained
+  category: builder-tools
+  how: crontab.guru/#*/5_*_*_*_*
+  you_get: Plain English "every 5 minutes"
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 3
+  hook: Cron is unreadable. Fix it.
+  used_in: []
+  check_url: https://crontab.guru/
+- id: T45
+  name: JSON as a graph
+  category: builder-tools
+  how: jsoncrack.com/editor
+  you_get: Paste JSON, get a node graph
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200 (SPA)
+  sign_in: 'no'
+  novelty: known
+  punch: 5
+  hook: JSON you can actually read.
+  used_in: []
+  check_url: https://jsoncrack.com/editor
+- id: T46
+  name: Code screenshot
+  category: builder-tools
+  how: carbon.now.sh / ray.so
+  you_get: Beautiful code images
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200 both
+  sign_in: 'no'
+  novelty: known
+  punch: 4
+  hook: Why your code screenshots look ugly.
+  used_in: []
+  check_url: https://carbon.now.sh
+- id: T47
+  name: Live Mermaid
+  category: builder-tools
+  how: mermaid.live
+  you_get: Text becomes a diagram as you type
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 4
+  hook: Draw diagrams by typing.
+  used_in: []
+  check_url: https://mermaid.live
+- id: T48
+  name: transform.tools
+  category: builder-tools
+  how: transform.tools
+  you_get: JSON to TypeScript/Zod as you type
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: fresh
+  punch: 4
+  hook: Stop writing types by hand.
+  used_in: []
+  check_url: https://transform.tools
+- id: T49
+  name: regex101
+  category: builder-tools
+  how: regex101.com
+  you_get: Matches highlighted, with an explanation
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 3
+  hook: Regex, explained live.
+  used_in: []
+  check_url: https://regex101.com
+- id: T50
+  name: caniuse
+  category: builder-tools
+  how: caniuse.com/css-has
+  you_get: Browser support grid
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 2
+  hook: Does it work in Safari?
+  used_in: []
+  check_url: https://caniuse.com/css-has
+- id: T51
+  name: PageSpeed
+  category: builder-tools
+  how: pagespeed.web.dev, enter a URL
+  you_get: Lighthouse scores
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200 page
+  sign_in: 'no'
+  novelty: known
+  punch: 3
+  hook: Grade any website in 10 seconds.
+  used_in: []
+  check_url: https://pagespeed.web.dev
+- id: T52
+  name: Free private AI chat
+  category: builder-tools
+  how: duck.ai
+  you_get: Multiple models, no account
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200 page
+  sign_in: 'no'
+  novelty: fresh
+  punch: 3
+  hook: Free GPT with no login.
+  used_in: []
+  check_url: https://duck.ai
+- id: T53
+  name: HuggingChat
+  category: builder-tools
+  how: huggingface.co/chat
+  you_get: Open models in a chat
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200 page
+  sign_in: login for some features
+  novelty: known
+  punch: 2
+  hook: Chat with open-source AI.
+  used_in: []
+  check_url: https://huggingface.co/chat
+- id: T54
+  name: Google's Code Wiki
+  category: feed-your-ai
+  how: github.com/... -> codewiki.google/github.com/pallets/click
+  you_get: An AI wiki of the repo
+  status: partial
+  checked: '2026-10-30'
+  evidence: partial, 30 Oct, curl 200 SPA shell only; content not seen
+  sign_in: unknown
+  novelty: fresh
+  punch: 5
+  hook: Google's answer to DeepWiki.
+  used_in: []
+  check_url: https://codewiki.google/github.com/pallets/click
+- id: T55
+  name: 'DevTools: `document.designMode="on"`'
+  category: browser
+  how: Console command
+  you_get: Edit any page's text by typing
+  status: behaviour
+  checked: '2026-10-30'
+  evidence: behaviour, not fetchable; standard API
+  sign_in: 'no'
+  novelty: known
+  punch: 5
+  hook: Edit any website.
+  used_in: []
+  check_url: null
+- id: T56
+  name: 'DevTools: Ctrl+Shift+P > "Capture full size screenshot"'
+  category: browser
+  how: DevTools command
+  you_get: A full-page PNG
+  status: behaviour
+  checked: '2026-10-30'
+  evidence: behaviour, not fetchable
+  sign_in: 'no'
+  novelty: known
+  punch: 3
+  hook: A full-page screenshot without an extension.
+  used_in: []
+  check_url: null
+- id: T57
+  name: 'Address bar: `data:text/html,<h1 contenteditable>`'
+  category: browser
+  how: Type into the URL bar
+  you_get: An instant notepad
+  status: behaviour
+  checked: '2026-10-30'
+  evidence: behaviour, not fetchable
+  sign_in: 'no'
+  novelty: known
+  punch: 4
+  hook: A notepad from the URL bar.
+  used_in: []
+  check_url: null
+- id: T58
+  name: Google `site:github.com "awesome" filetype:md`
+  category: browser
+  how: search operators
+  you_get: Curated lists
+  status: behaviour
+  checked: '2026-10-30'
+  evidence: behaviour, not fetchable
+  sign_in: 'no'
+  novelty: known
+  punch: 2
+  hook: Google like a dev.
+  used_in: []
+  check_url: null
+- id: T59
+  name: Press `t` on a repo (file finder), `y` (permalink)
+  category: hidden-github-urls
+  how: GitHub keyboard shortcuts
+  you_get: A fuzzy finder pops up
+  status: behaviour
+  checked: '2026-10-30'
+  evidence: behaviour, not fetchable
+  sign_in: 'no'
+  novelty: known
+  punch: 3
+  hook: GitHub has hidden hotkeys.
+  used_in: []
+  check_url: null
+- id: T60
+  name: Live HTTP client
+  category: builder-tools
+  how: hoppscotch.io
+  you_get: Postman in a tab
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 2
+  hook: Postman without installing Postman.
+  used_in: []
+  check_url: https://hoppscotch.io
+- id: T61
+  name: Excalidraw
+  category: builder-tools
+  how: excalidraw.com
+  you_get: A hand-drawn whiteboard
+  status: verified
+  checked: '2026-10-30'
+  evidence: yes, 30 Oct, curl 200
+  sign_in: 'no'
+  novelty: known
+  punch: 3
+  hook: Whiteboard by URL.
+  used_in: []
+  check_url: https://excalidraw.com
