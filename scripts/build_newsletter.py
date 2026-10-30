@@ -36,7 +36,7 @@ def main():
            "You are building with AI.", "", "You open a repo you did not write.", "",
            "You need to understand it in five minutes, not five hours.", "", "Most people clone it, scroll, and give up.", "",
            "You can change one word in the URL instead.", "",
-           "![Five GitHub links from today's Skill Set video](assets/cover.png)", "Caption: From today's video. The repo is pallets/click, drawn by gitdiagram.com.", "",
+           "![Five GitHub links from today's Skill Set video](assets/cover.png)", "", "Caption: From today's video. The repo is pallets/click, drawn by gitdiagram.com.", "",
            f"This is the full Skill Set list: =={len(live)} tricks, every one tested, in one place.==", "",
            "- **Read any repo fast.** Diagrams, one-file digests, editors in the browser.",
            "- **Hand it to your AI.** Pack repos and docs so your assistant sees the real thing.",

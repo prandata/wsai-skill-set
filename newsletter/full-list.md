@@ -18,6 +18,7 @@ Most people clone it, scroll, and give up.
 You can change one word in the URL instead.
 
 ![Five GitHub links from today's Skill Set video](assets/cover.png)
+
 Caption: From today's video. The repo is pallets/click, drawn by gitdiagram.com.
 
 This is the full Skill Set list: ==55 tricks, every one tested, in one place.==
