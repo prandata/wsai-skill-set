@@ -14,6 +14,7 @@ tricks:
   punch: 5
   hook: Swap 'hub' for 'diagram'.
   used_in:
+  - issue-01
   - skill-set-01
   check_url: https://gitdiagram.com/pallets/click
   title: Diagram any repo
@@ -32,6 +33,7 @@ tricks:
   punch: 4
   hook: Paste a whole repo into ChatGPT.
   used_in:
+  - issue-01
   - skill-set-01
   check_url: https://gitingest.com/pallets/click
   title: Turn a repo into one text page
@@ -49,7 +51,8 @@ tricks:
   novelty: known
   punch: 5
   hook: Press one key on GitHub.
-  used_in: []
+  used_in:
+  - issue-01
   check_url: https://github.dev/pallets/click
   title: Press . on any repo
   try: github.dev/pallets/click
@@ -67,6 +70,7 @@ tricks:
   punch: 4
   hook: Add '1s' and GitHub becomes an IDE.
   used_in:
+  - issue-01
   - skill-set-01
   check_url: https://github1s.com/pallets/click
   title: Add 1s for an editor
@@ -101,7 +105,8 @@ tricks:
   novelty: fresh
   punch: 3
   hook: Make any repo an MCP server in one word.
-  used_in: []
+  used_in:
+  - issue-01
   check_url: https://gitmcp.io/pallets/click
   title: Make any repo an MCP server
   try: gitmcp.io/pallets/click
@@ -153,6 +158,7 @@ tricks:
   punch: 5
   hook: The repo dashboard GitHub hides.
   used_in:
+  - issue-01
   - skill-set-01
   check_url: https://ossinsight.io/analyze/pallets/click
   note: 'Its own page warns growth figures undercount since March 2026: trust the totals, not the trend lines.'
@@ -172,6 +178,7 @@ tricks:
   punch: 5
   hook: Add 'githistory.xyz' and watch a file evolve.
   used_in:
+  - issue-01
   - skill-set-01
   check_url: https://github.githistory.xyz/pallets/click/blob/main/README.md
   title: Replay a file's history
@@ -189,7 +196,8 @@ tricks:
   novelty: fresh
   punch: 3
   hook: The best version of this repo might be a fork.
-  used_in: []
+  used_in:
+  - issue-01
   check_url: https://useful-forks.github.io/?repo=pallets/click
   title: Find the forks that matter
   try: useful-forks.github.io/?repo=pallets/click
@@ -478,7 +486,8 @@ tricks:
   novelty: fresh
   punch: 3
   hook: Stop your AI using old docs.
-  used_in: []
+  used_in:
+  - issue-01
   check_url: https://context7.com/pallets/click
   title: Current docs for your AI
   try: context7.com/pallets/click
@@ -597,7 +606,8 @@ tricks:
   novelty: known
   punch: 4
   hook: Never google a tar flag again.
-  used_in: []
+  used_in:
+  - issue-01
   check_url: https://explainshell.com/explain?cmd=tar+-xzvf+a.tgz
   title: Explain any shell command
   try: explainshell.com/explain?cmd=tar+-xzvf+a.tgz
