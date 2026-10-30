@@ -16,6 +16,8 @@ the official docs, checked 31 Oct 2026.
    the body loads on demand, so long reference material is cheap. (code.claude.com/docs/en/skills)
 4. **A hook** (`.claude/settings.json`): CLAUDE.md is context, not enforced configuration. To block an action no
    matter what Claude decides, use a PreToolUse hook. Exit code 2 blocks the call and shows stderr to Claude.
+   Set `"onFailure": "block"`: by default a hook that crashes or times out lets the command through (Claude Code
+   v2.1.295+).
    (code.claude.com/docs/en/hooks)
 
 ## Steps
