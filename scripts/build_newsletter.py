@@ -4,7 +4,7 @@
   python3 scripts/build_newsletter.py > newsletter/full-list.md
 
 Verified and behaviour tricks go in the list; partial ones go under "Testing next"; broken ones are left out."""
-import yaml
+import yaml, datetime
 from pathlib import Path
 
 D = yaml.safe_load((Path(__file__).resolve().parent.parent / "tricks.yaml").read_text())
@@ -18,6 +18,8 @@ SECTIONS = [
     ("browser", "Browser tricks.", "Already in your browser. Nothing to install."),
 ]
 
+def nice(d): return datetime.date.fromisoformat(str(d)).strftime("%-d %b %Y")
+
 def line(t):
     how = t["how"].replace("->", "→")
     s = f"- **{t['name']}:** `{how}`. {t['you_get']}."
@@ -29,7 +31,7 @@ def line(t):
 def main():
     tr = D["tricks"]; live = [t for t in tr if t["status"] in ("verified", "behaviour")]
     out = ["[[META]]", "Title: Links that feel illegal.",
-           f"Subtitle: {len(live)} tricks for people building with AI, each tested on {D['updated']}:",
+           f"Subtitle: {len(live)} tricks for people building with AI, each tested on {nice(D['updated'])}:",
            "Audience: everyone", "Email: do not send", "Cover / social image: assets/cover.png", "Tags: skill set, github, tools", "[[/META]]", "",
            "You are building with AI.", "", "You open a repo you did not write.", "",
            "You need to understand it in five minutes, not five hours.", "", "Most people clone it, scroll, and give up.", "",
@@ -42,7 +44,7 @@ def main():
            "Save this post. You will need it the day you open a strange repo.", "", "[[BUTTON: Share]]", "",
            "[[CENTER]] Know a builder who clones whole repos for one file? Send them this.", "", "---", "",
            "## How we test.", "",
-           f"Every link was checked on {D['updated']} against one public repo, `{D['test_repo']}`. Swap in your own `owner/repo`.", "",
+           f"Every link was checked on {nice(D['updated'])} against one public repo, `{D['test_repo']}`. Swap in your own `owner/repo`.", "",
            "==A page loading is not the same as a trick working.== Before a trick goes in a video, we run it in a browser.", "",
            "Sites change. If one breaks, tell us in the comments and we fix the list.", "", "---", ""]
     for n, (key, title, intro) in enumerate(SECTIONS, 1):

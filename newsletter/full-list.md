@@ -1,6 +1,6 @@
 [[META]]
 Title: Links that feel illegal.
-Subtitle: 55 tricks for people building with AI, each tested on 2026-10-30:
+Subtitle: 55 tricks for people building with AI, each tested on 30 Oct 2026:
 Audience: everyone
 Email: do not send
 Cover / social image: assets/cover.png
@@ -36,7 +36,7 @@ Save this post. You will need it the day you open a strange repo.
 
 ## How we test.
 
-Every link was checked on 2026-10-30 against one public repo, `pallets/click`. Swap in your own `owner/repo`.
+Every link was checked on 30 Oct 2026 against one public repo, `pallets/click`. Swap in your own `owner/repo`.
 
 ==A page loading is not the same as a trick working.== Before a trick goes in a video, we run it in a browser.
 
