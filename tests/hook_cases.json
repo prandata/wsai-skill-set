@@ -1,10 +1,47 @@
 {
   "block": [
-    "rm -rf /", "rm -rf /*", "rm -rf ~/", "rm -rf ~", "rm -fr /", "rm -r -f /", "rm -Rf .", "rm -rf *", "sudo rm -rf /",
-    "git push --force", "git push origin main --force", "git push -f origin main", "git push origin +main", "git push --force-with-lease",
-    "cat .env", "less .env", "grep KEY .env", "cp .env /tmp/x"
+    "rm -rf /",
+    "rm -rf /*",
+    "rm -rf ~/",
+    "rm -rf ~",
+    "rm -fr /",
+    "rm -r -f /",
+    "rm -Rf .",
+    "rm -rf *",
+    "sudo rm -rf /",
+    "git push --force",
+    "git push origin main --force",
+    "git push -f origin main",
+    "git push origin +main",
+    "git push --force-with-lease",
+    "cat .env",
+    "less .env",
+    "grep KEY .env",
+    "cp .env /tmp/x",
+    "r''m -rf /",
+    "rm --recursive --force /",
+    "git push -uf origin main",
+    "rm -rf \"/\"",
+    "bash -c 'rm -rf /'",
+    "rm -rf $HOME",
+    "git -C repo push --force",
+    "git --no-pager push -f",
+    "cat services/api/.env",
+    "echo x && rm -rf ~"
   ],
   "allow": [
-    "ls", "bun test", "rm -rf ./build", "rm -rf node_modules", "rm file.txt", "git push origin main", "git status", "echo environment", "cat README.md"
+    "ls",
+    "bun test",
+    "rm -rf ./build",
+    "rm -rf node_modules",
+    "rm file.txt",
+    "git push origin main",
+    "git status",
+    "echo environment",
+    "cat README.md",
+    "git push -u origin main",
+    "rm -rf dist",
+    "cat .envrc.md",
+    "git commit -m 'force push docs'"
   ]
 }
