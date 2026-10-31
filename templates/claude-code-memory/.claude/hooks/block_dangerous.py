@@ -66,20 +66,24 @@ HEREDOC = re.compile(r"(\bcat\b[^\n<]*<<-?\s*(['\"]?)(\w+)\2[^\n]*)\n(.*?)\n[ \t
 PIPE_TO_SHELL = re.compile(r"\|\s*(?:sudo\s+)?(?:\S*/)?(?:ba|z|da|k)?sh\b")
 BRACES = re.compile(r"\{([^{}]*,[^{}]*)\}")
 
-def expand(tok):
+def expand(tok, budget=[0]):
     m = BRACES.search(tok)
     if not m:
         return [tok]
-    return [x for part in m.group(1).split(",") for x in expand(tok[:m.start()] + part + tok[m.end():])]
+    out = [x for part in m.group(1).split(",") for x in expand(tok[:m.start()] + part + tok[m.end():])]
+    if len(out) > 256:
+        block("brace expansion too large to inspect")
+    return out
 
 def check(text, depth=0):
     if depth > 4:
         block("nested shell too deep to inspect")
-    text = text.replace("\\\n", "")   # bash drops backslash-newline; shlex would keep a newline char in the word
+    text = re.sub(r"(?<!\\)((?:\\\\)*)\\\n", r"\1", text)   # bash drops backslash-newline; shlex would keep a newline char in the word
     def strip(m):
         line_start = m.string.rfind("\n", 0, m.start(1)) + 1
         prefix = m.string[line_start:m.start(1)]
-        if prefix.count("'") % 2 or "#" in prefix or m.group(1).count("'") % 2:
+        unquoted = re.sub(r"'[^']*'|\"[^\"]*\"", "", prefix)
+        if prefix.count("'") % 2 or re.search(r"(^|\s)#", unquoted) or m.group(1).count("'") % 2:
             return m.group(0)               # 'cat <<EOF' inside a string or comment: not a heredoc, keep the lines
         if PIPE_TO_SHELL.search(m.group(1)):
             check(m.group(4), depth + 1)   # cat <<EOF | bash: the body runs
@@ -116,7 +120,7 @@ def check(text, depth=0):
                         check(rest[j + 1], depth + 1)
                     if a == "<<<" and j + 1 < len(rest):
                         check(rest[j + 1], depth + 1)
-                if prev and all(posixpath.basename(x) in ("sudo", "env", "exec", "command", "nohup") or x.startswith("-") for x in seg[:i]) and not any(re.fullmatch(r"-[A-Za-z]*c[A-Za-z]*", a) or not a.startswith("-") for a in rest):
+                if prev and all(posixpath.basename(x) in ("sudo", "env", "exec", "command", "nohup", "doas", "timeout", "nice") or x.startswith("-") or (k > 0 and seg[k - 1].startswith("-")) or re.fullmatch(r"[0-9.]+[smhd]?", x) for k, x in enumerate(seg[:i])) and not any(re.fullmatch(r"-[A-Za-z]*c[A-Za-z]*", a) or not a.startswith("-") for a in rest):
                     check(" ".join(prev), depth + 1)   # echo '...' | sh
             if b == "rm":
                 flags = [a for a in rest if a.startswith("-")]

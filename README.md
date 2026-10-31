@@ -21,7 +21,7 @@ cp -r wsai-skill-set/skills/wsai-skill-set ~/.claude/skills/ && cp wsai-skill-se
 ## Templates
 
 [`templates/claude-code-memory/`](templates/claude-code-memory/): copy-paste CLAUDE.md, AGENTS.md, SKILL.md and a
-PreToolUse hook (`block-dangerous.sh` blocks recursive force-deletes of `/`, `~`, `*` and `.`, force-pushes, and shell commands that mention `.env`; 93 cases in `tests/test_hook.py`, including quoting tricks, long flags and `bash -c`) plus a `permissions.deny` rule so the Read tool cannot open `.env` either.
+PreToolUse hook (`block-dangerous.sh` blocks recursive force-deletes of `/`, `~`, `*` and `.`, force-pushes, and shell commands that mention `.env`; 98 cases in `tests/test_hook.py`, including quoting tricks, long flags and `bash -c`) plus a `permissions.deny` rule so the Read tool cannot open `.env` either.
 
 ## The trick list
 
@@ -37,3 +37,16 @@ we've seen it work in a browser. Claims need a source.
 ## How this is made
 
 Pranjal writes What Survives in AI. AI agents help gather and check the material; he reviews what's published.
+
+## Known limits of the hook
+
+It is a guardrail, not a sandbox. It parses commands the way a shell does, but it does not run them, so it cannot see:
+
+| Not covered | Example |
+|---|---|
+| Variables and command output | `d=/; rm -rf $d` |
+| Other interpreters | `python3 -c "shutil.rmtree('/')"` |
+| Encoded or downloaded scripts | `echo ... \| base64 -d \| sh` |
+| Aliases and functions | `alias x='rm -rf /'` |
+
+For a hard block, use permission deny rules and the sandbox (see the Claude Code permissions and sandboxing docs). Deliberate obfuscation beyond these is out of scope by design.

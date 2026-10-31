@@ -60,7 +60,11 @@
     "rm -rf \\\n/",
     "echo 'rm -rf /' | sudo bash",
     "find build / -delete",
-    "cat .ENV"
+    "cat .ENV",
+    "rm -rf {/,x}",
+    "a\\\\\nrm -rf /",
+    "echo 'rm -rf /' | sudo -u root bash",
+    "echo 'rm -rf /' | timeout 5 bash"
   ],
   "allow": [
     "ls",
@@ -89,11 +93,12 @@
     "rm -rf ~/projects/old-thing",
     "find . -name '*.pyc' -delete",
     "cat .envrc",
-    "find . -name '*.pyc' -delete",
     "cat <<EOF > notes.txt\nrm -rf / is a bad idea\nEOF",
     "echo {a,b}.txt",
     "grep '^$' f",
     "grep -E 'foo$' f",
-    "rg 'TODO$' src"
+    "rg 'TODO$' src",
+    "cat <<EOF > out.txt # note\nhello\nEOF",
+    "echo \"#tag\" && cat <<EOF > a.txt\nx\nEOF"
   ]
 }
