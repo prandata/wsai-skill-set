@@ -21,7 +21,7 @@ cp -r wsai-skill-set/skills/wsai-skill-set ~/.claude/skills/ && cp wsai-skill-se
 ## Templates
 
 [`templates/claude-code-memory/`](templates/claude-code-memory/): copy-paste CLAUDE.md, AGENTS.md, SKILL.md and a
-PreToolUse hook (`block-dangerous.sh` blocks `rm -rf /`, force-pushes and reading `.env`; tested).
+PreToolUse hook (`block-dangerous.sh` blocks recursive force-deletes of `/`, `~`, `*` and `.`, force-pushes, and shell commands that mention `.env`; 29 cases in `tests/test_hook.py`) plus a `permissions.deny` rule so the Read tool cannot open `.env` either.
 
 ## The trick list
 
