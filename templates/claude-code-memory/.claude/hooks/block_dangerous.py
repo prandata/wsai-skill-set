@@ -44,12 +44,25 @@ def segments(toks):
     out.append(seg)
     return [s for s in out if s]
 
-HEREDOC = re.compile(r"(\bcat\b[^\n<]*<<-?\s*(['\"]?)(\w+)\2[^\n]*)\n.*?\n[ \t]*\3[ \t]*(?=\n|$)", re.S)
+HEREDOC = re.compile(r"(\bcat\b[^\n<]*<<-?\s*(['\"]?)(\w+)\2[^\n]*)\n(.*?)\n[ \t]*\3[ \t]*(?=\n|$)", re.S)
+PIPE_TO_SHELL = re.compile(r"\|\s*(?:sudo\s+)?(?:\S*/)?(?:ba|z|da|k)?sh\b")
+BRACES = re.compile(r"\{([^{}]*,[^{}]*)\}")
+
+def expand(tok):
+    m = BRACES.search(tok)
+    if not m:
+        return [tok]
+    return [x for part in m.group(1).split(",") for x in expand(tok[:m.start()] + part + tok[m.end():])]
 
 def check(text, depth=0):
     if depth > 4:
         block("nested shell too deep to inspect")
+    for m in HEREDOC.finditer(text):
+        if PIPE_TO_SHELL.search(m.group(1)):
+            check(m.group(4), depth + 1)   # cat <<EOF | bash: the body runs
     text = HEREDOC.sub(r"\1", text)
+    for inner in re.findall(r"`([^`]*)`", text) + re.findall(r"\$\(([^()]*)\)", text):
+        check(inner, depth + 1)
     if re.search(r"\$'|\$\{?IFS\b", text):
         block("quoting form the hook cannot inspect ($'..' or IFS): " + text.strip()[:80])
     try:
@@ -62,7 +75,7 @@ def check(text, depth=0):
             if "$(" in t or "`" in t:
                 for inner in re.findall(r"\$\((.*)\)", t, re.S) + re.findall(r"`([^`]*)`", t):
                     check(inner, depth + 1)
-            if is_env(t):
+            if any(is_env(x) for x in expand(t)):
                 block(".env is off limits: " + " ".join(seg)[:80])
         base = [posixpath.basename(t) for t in seg]
         for i, b in enumerate(base):
@@ -71,7 +84,7 @@ def check(text, depth=0):
                 check(" ".join(rest), depth + 1)
             if b in SHELLS:
                 for j, a in enumerate(rest):
-                    if re.fullmatch(r"-[A-Za-z]*c[A-Za-z]*", a) and j + 1 < len(rest):
+                    if (re.fullmatch(r"-[A-Za-z]*c[A-Za-z]*", a) or a == "--command") and j + 1 < len(rest):
                         check(rest[j + 1], depth + 1)
                     if a == "<<<" and j + 1 < len(rest):
                         check(rest[j + 1], depth + 1)
@@ -85,7 +98,9 @@ def check(text, depth=0):
                     block("recursive force-delete of a root, home or whole folder: " + " ".join(seg)[:80])
             if b == "find" and "-delete" in rest or (b == "find" and any(posixpath.basename(r) == "rm" for r in rest)):
                 paths = [a for a in rest if not a.startswith("-")][:1]
-                if paths and danger(paths[0]) and not any(f in rest for f in FIND_FILTERS):
+                broad = paths and danger(paths[0])
+                root = paths and posixpath.normpath(paths[0]) in ("/", "~", "$HOME", "${HOME}")
+                if broad and (root or not any(f in rest for f in FIND_FILTERS)):
                     block("find that deletes everything under a root, home or whole folder: " + " ".join(seg)[:80])
             if b == "git" and "push" in rest:
                 for a in rest[rest.index("push") + 1:]:
