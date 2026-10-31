@@ -55,7 +55,12 @@
     "find ~ -mtime +1 -delete",
     "./.env",
     "bash --command 'rm -rf /'",
-    "bash -ec 'rm -rf /'"
+    "bash -ec 'rm -rf /'",
+    "git push \\\n--force",
+    "rm -rf \\\n/",
+    "echo 'rm -rf /' | sudo bash",
+    "find build / -delete",
+    "cat .ENV"
   ],
   "allow": [
     "ls",
@@ -86,6 +91,9 @@
     "cat .envrc",
     "find . -name '*.pyc' -delete",
     "cat <<EOF > notes.txt\nrm -rf / is a bad idea\nEOF",
-    "echo {a,b}.txt"
+    "echo {a,b}.txt",
+    "grep '^$' f",
+    "grep -E 'foo$' f",
+    "rg 'TODO$' src"
   ]
 }

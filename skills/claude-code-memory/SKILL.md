@@ -22,7 +22,7 @@ the official docs, checked 31 Oct 2026.
 
 ## Steps
 
-1. Copy the four template files into the repo root, keeping paths.
+1. Copy the template files into the repo root, keeping paths: CLAUDE.md, AGENTS.md, .claude/settings.json, .claude/skills/repo-conventions/SKILL.md, and both hook files, .claude/hooks/block-dangerous.sh and .claude/hooks/block_dangerous.py. The hook needs both; with only the .sh file every Bash call is blocked.
 2. Fill in the `<...>` placeholders from the repo's real commands (read package.json / Makefile / pyproject first).
 3. `chmod +x .claude/hooks/block-dangerous.sh`, then test it:
    `echo '{"tool_input":{"command":"rm -rf /"}}' | .claude/hooks/block-dangerous.sh; echo $?` should print 2.
