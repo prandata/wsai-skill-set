@@ -82,7 +82,20 @@
     "cd x && sudo bash <<EOF\nrm -rf /\nEOF",
     "echo start; bash -s <<'EOF'\ncat .env\nEOF",
     "cat <<EOF | /usr/bin/env bash\nrm -rf /\nEOF",
-    "echo 'rm -rf /' | time bash"
+    "echo 'rm -rf /' | time bash",
+    "sudo -E bash <<'EOF'\nrm -rf /\nEOF",
+    "env -i bash <<EOF\nrm -rf /\nEOF",
+    "timeout 5 bash <<EOF\nrm -rf /\nEOF",
+    "nohup -- bash <<EOF\nrm -rf /\nEOF",
+    "bash -c \"$(cat <<'EOF'\nrm -rf /\nEOF\n)\"",
+    "{ bash <<EOF\nrm -rf /\nEOF\n}",
+    "! bash <<EOF\nrm -rf /\nEOF",
+    "<<EOF bash\nrm -rf /\nEOF",
+    "bash -s -- 'a;b' <<EOF\nrm -rf /\nEOF",
+    "sudo -u git rm -rf /",
+    "bash scripts/test.sh",
+    "source .venv/bin/activate",
+    "xargs -I{} sh -c 'echo {}'"
   ],
   "allow": [
     "ls",
@@ -123,6 +136,10 @@
     "diff <(sort a) <(sort b)",
     "rm -r build",
     "git rm -r --cached .",
-    "git rm -r --cached *"
+    "git rm -r --cached *",
+    "git -C repo rm -r --cached .",
+    "which bash",
+    "echo bash",
+    "brew info bash"
   ]
 }

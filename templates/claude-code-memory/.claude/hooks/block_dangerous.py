@@ -67,11 +67,24 @@ PIPE_TO_SHELL = re.compile(r"\|\s*(?:(?:\S*/)?(?:sudo|doas|env|nohup|nice|timeou
 WRAPPERS = {"sudo", "doas", "env", "nohup", "nice", "timeout", "command", "exec", "time", "setsid", "stdbuf"}
 
 def heredoc_reader_is_shell(header):
-    seg = re.split(r"&&|\|\||[;|(&]|\bthen\b|\bdo\b", header.split("<<")[0])[-1].split()
+    # Inspect the body if any word on the heredoc line is a shell. This is safe: a body is blocked only when it is dangerous.
+    words = re.split(r"[\s;&|(){}!\"'`$]+", header)
+    return any(posixpath.basename(w) in SHELLS for w in words if w)
+
+def command_word(seg):
     i = 0
-    while i < len(seg) and (posixpath.basename(seg[i]) in WRAPPERS or seg[i].startswith("-") or re.fullmatch(r"\w+=.*", seg[i]) or (i > 0 and seg[i - 1].startswith("-"))):
-        i += 1
-    return i < len(seg) and posixpath.basename(seg[i]) in SHELLS
+    while i < len(seg):
+        w = seg[i]
+        if posixpath.basename(w) in WRAPPERS | {"xargs", "parallel"} or w in ("{", "!", "--") or re.fullmatch(r"\w+=.*", w) or re.fullmatch(r"[0-9.]+[smhd]?", w):
+            i += 1
+        elif w in ("-u", "-g", "-C", "-n", "-k", "-I", "-L", "-P") and i + 1 < len(seg):
+            i += 2
+        elif w.startswith("-"):
+            i += 1
+        else:
+            return i
+    return None
+
 BRACES = re.compile(r"\{([^{}]*,[^{}]*)\}")
 
 def expand(tok, budget=[0]):
@@ -94,6 +107,7 @@ def check(text, depth=0):
         if prefix.count("'") % 2 or re.search(r"(^|\s)#", unquoted) or m.group(1).count("'") % 2:
             return m.group(0)               # 'cat <<EOF' inside a string or comment: not a heredoc, keep the lines
         if PIPE_TO_SHELL.search(m.group(1)) or heredoc_reader_is_shell(m.group(1)):
+            block("a heredoc into a shell is blocked (simple rule; see README Known limits): " + m.group(1).strip()[:80])
             check(m.group(4), depth + 1)   # cat <<EOF | bash: the body runs
         if not m.group(2):                  # unquoted delimiter: bash expands $(..) and `..` in the body
             for inner in re.findall(r"`([^`]*)`", m.group(4)) + re.findall(r"\$\(([^()]*)\)", m.group(4)):
@@ -115,6 +129,9 @@ def check(text, depth=0):
     prev = []
     for seg in segments(toks):
         seg = [x for t in seg for x in expand(t)]
+        cw = command_word(seg)
+        if cw is not None and posixpath.basename(seg[cw]) in SHELLS | {"eval", "source", "."}:
+            block("running a shell interpreter (bash, sh, zsh, eval, source) is blocked; run the commands directly (simple rule; see README Known limits): " + " ".join(seg)[:80])
         for t in seg:
             if "$(" in t or "`" in t:
                 for inner in re.findall(r"\$\((.*)\)", t, re.S) + re.findall(r"`([^`]*)`", t):
@@ -134,7 +151,8 @@ def check(text, depth=0):
                         check(rest[j + 1], depth + 1)
                 if prev and all(posixpath.basename(x) in WRAPPERS or x.startswith("-") or re.fullmatch(r"\w+=.*", x) or (k > 0 and seg[k - 1].startswith("-")) or re.fullmatch(r"[0-9.]+[smhd]?", x) for k, x in enumerate(seg[:i])) and not any(re.fullmatch(r"-[A-Za-z]*c[A-Za-z]*", a) or not a.startswith("-") for a in rest):
                     check(" ".join(prev), depth + 1)   # echo '...' | sh
-            if b == "rm" and not (i > 0 and base[i - 1] == "git"):
+            cw = command_word(seg)
+            if b == "rm" and not (cw is not None and posixpath.basename(seg[cw]) == "git" and cw < i):
                 flags = [a for a in rest if a.startswith("-")]
                 rec = any(a == "--recursive" or (not a.startswith("--") and re.search(r"[rR]", a)) for a in flags)
                 force = any(a == "--force" or (not a.startswith("--") and "f" in a) for a in flags)
