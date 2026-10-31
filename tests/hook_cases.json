@@ -27,7 +27,10 @@
     "git -C repo push --force",
     "git --no-pager push -f",
     "cat services/api/.env",
-    "echo x && rm -rf ~"
+    "echo x && rm -rf ~",
+    "git -c x=y push -f",
+    "git push --mirror",
+    "git push origin --delete main"
   ],
   "allow": [
     "ls",

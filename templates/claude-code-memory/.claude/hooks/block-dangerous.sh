@@ -56,7 +56,7 @@ def check(text, depth=0):
         if prog == "git" and "push" in args:
             after = args[args.index("push") + 1:]
             for a in after:
-                if a == "--force" or a.startswith("--force") or a.startswith("+") or (re.match(r"^-[a-zA-Z]+$", a) and "f" in a):
+                if a in ("--force", "--mirror", "--delete") or a.startswith("--force") or a.startswith("+") or (re.match(r"^-[a-zA-Z]+$", a) and "f" in a):
                     block("force-push: " + seg.strip())
 
 check(cmd)
