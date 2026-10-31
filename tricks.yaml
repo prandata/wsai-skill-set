@@ -1,4 +1,4 @@
-updated: '2026-10-30'
+updated: '2026-10-31'
 test_repo: pallets/click
 tricks:
 - id: T01
@@ -7,7 +7,7 @@ tricks:
   how: github.com/pallets/click -> gitdiagram.com/pallets/click
   you_get: An interactive architecture diagram
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200, title "architecture diagram"
   sign_in: 'no'
   novelty: overused
@@ -26,7 +26,7 @@ tricks:
   how: github.com/... -> gitingest.com/pallets/click
   you_get: Token count plus a full text digest
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: 'yes, 30 Oct, API JSON: 166 files, 220.1k tokens'
   sign_in: 'no'
   novelty: overused
@@ -45,7 +45,7 @@ tricks:
   how: github.com/pallets/click -> github.dev/pallets/click
   you_get: Full VS Code in the tab
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200 (342 KB app)
   sign_in: GitHub login for some features; browsing works
   novelty: known
@@ -63,7 +63,7 @@ tricks:
   how: github.com -> github1s.com/pallets/click
   you_get: VS Code without any login
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200, title GitHub1s
   sign_in: 'no'
   novelty: known
@@ -82,7 +82,7 @@ tricks:
   how: vscode.dev/github/pallets/click
   you_get: VS Code from a URL
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: no to browse
   novelty: known
@@ -99,7 +99,7 @@ tricks:
   how: github.com -> gitmcp.io/pallets/click
   you_get: An MCP server URL for any repo, plus a chat
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200, page lists the endpoint
   sign_in: 'no'
   novelty: fresh
@@ -117,7 +117,7 @@ tricks:
   how: github.com -> gitpodcast.com/pallets/click
   you_get: An audio podcast about the repo
   status: partial
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: partial, 30 Oct, curl 200 page; audio generation not run
   sign_in: unclear
   novelty: fresh
@@ -145,13 +145,14 @@ tricks:
   title: Count a repo's lines of code
   try: ghloc.vercel.app/pallets/click
   reader: ''
+  last_fail: 2026-10-31 HTTP 402
 - id: T09
   name: Repo analytics
   category: understand-a-repo
   how: ossinsight.io/analyze/pallets/click
   you_get: Stars and contributor charts, world map
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200, title "Analyze pallets/click"
   sign_in: 'no'
   novelty: fresh
@@ -171,7 +172,7 @@ tricks:
   how: github.com/... -> github.githistory.xyz/pallets/click/blob/main/README.md
   you_get: Commits sliding in as an animation
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200, title Git History
   sign_in: 'no'
   novelty: known
@@ -190,7 +191,7 @@ tricks:
   how: useful-forks.github.io/?repo=pallets/click
   you_get: Forks ranked by stars and commits ahead
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: no (low rate limit without a token)
   novelty: fresh
@@ -208,7 +209,7 @@ tricks:
   how: download-directory.github.io/?url=<folder url>
   you_get: A zip of a single folder
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known
@@ -225,7 +226,7 @@ tricks:
   how: '.../commit/main -> .../commit/main.patch'
   you_get: A raw email-style patch
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200, "From 9f0bcdf..."
   sign_in: 'no'
   novelty: known
@@ -242,7 +243,7 @@ tricks:
   how: '.../pull/2800 -> .../pull/2800.diff'
   you_get: Plain diff text
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known
@@ -259,7 +260,7 @@ tricks:
   how: github.com/<user>.keys
   you_get: The user's public SSH keys
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: 'yes, 30 Oct, curl 200 (pallets org: empty; use a person)'
   sign_in: 'no'
   novelty: fresh
@@ -276,7 +277,7 @@ tricks:
   how: github.com/torvalds.gpg
   you_get: 'PGP block (torvalds: "no GPG keys")'
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: fresh
@@ -293,7 +294,7 @@ tricks:
   how: github.com/torvalds.png
   you_get: The avatar image
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200, 28 KB
   sign_in: 'no'
   novelty: known
@@ -310,7 +311,7 @@ tricks:
   how: '.../blob/main/README.md -> .../blame/main/README.md'
   you_get: Who wrote every line
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known
@@ -327,7 +328,7 @@ tricks:
   how: '.../compare/8.1.0...8.1.7'
   you_get: Every change between releases
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known
@@ -344,7 +345,7 @@ tricks:
   how: '.../commits/main.atom (repo.atom gives 404)'
   you_get: An RSS feed of commits
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known
@@ -361,7 +362,7 @@ tricks:
   how: github.com/.../blob/... -> raw.githubusercontent.com/pallets/click/main/README.md
   you_get: Bare file text
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known
@@ -378,7 +379,7 @@ tricks:
   how: cdn.jsdelivr.net/gh/pallets/click@main/README.md
   you_get: The file served from a CDN
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known
@@ -395,7 +396,7 @@ tricks:
   how: api.github.com/repos/pallets/click
   you_get: Stars (17,805), creation date, everything
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: no (60 requests/hr)
   novelty: known
@@ -412,7 +413,7 @@ tricks:
   how: github.com/... .ipynb -> colab.research.google.com/github/...
   you_get: The notebook, ready to run
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200 page
   sign_in: Google login to run
   novelty: known
@@ -429,7 +430,7 @@ tricks:
   how: nbviewer.org/github/...
   you_get: A clean rendered notebook
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known
@@ -446,7 +447,7 @@ tricks:
   how: stackblitz.com/github/<owner>/<repo>
   you_get: A running dev environment (JS repos)
   status: partial
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: partial, 30 Oct, curl 200; demo on a JS repo
   sign_in: 'no'
   novelty: known
@@ -463,7 +464,7 @@ tricks:
   how: sourcegraph.com/github.com/pallets/click
   you_get: Code browser with search
   status: partial
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: partial, 30 Oct, curl 200; public search scope may have changed, check
   sign_in: maybe
   novelty: known
@@ -480,7 +481,7 @@ tricks:
   how: context7.com/pallets/click (+ /llms.txt)
   you_get: Up-to-date docs for an LLM
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200 both
   sign_in: 'no'
   novelty: fresh
@@ -498,7 +499,7 @@ tricks:
   how: repomix.com, paste the repo URL
   you_get: Repo packed into one AI file
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200 page
   sign_in: 'no'
   novelty: known
@@ -515,7 +516,7 @@ tricks:
   how: repo2txt.simplebasedomain.com
   you_get: Pick files, get one text file
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: fresh
@@ -532,7 +533,7 @@ tricks:
   how: bundlephobia.com/package/react
   you_get: Bundle size and download time
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known
@@ -549,7 +550,7 @@ tricks:
   how: npmgraph.js.org/?q=react
   you_get: A dependency graph
   status: partial
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: partial, 30 Oct, curl 200 (SPA)
   sign_in: 'no'
   novelty: fresh
@@ -566,7 +567,7 @@ tricks:
   how: deps.dev/pypi/click
   you_get: Dependencies, licences, advisories
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: fresh
@@ -583,7 +584,7 @@ tricks:
   how: pypi.org/pypi/click/json
   you_get: Latest version (8.5.0) as JSON
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: fresh
@@ -612,13 +613,14 @@ tricks:
   title: Explain any shell command
   try: explainshell.com/explain?cmd=tar+-xzvf+a.tgz
   reader: Every flag, labelled.
+  last_fail: 2026-10-31 HTTP 403
 - id: T36
   name: cheat.sh in the terminal
   category: terminal
   how: curl cheat.sh/tar
   you_get: Instant tar examples
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl output
   sign_in: 'no'
   novelty: known
@@ -635,7 +637,7 @@ tricks:
   how: curl wttr.in/Sydney
   you_get: ASCII weather art
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, output "Overcast +20 °C"
   sign_in: 'no'
   novelty: overused
@@ -652,7 +654,7 @@ tricks:
   how: curl qrenco.de/github.com
   you_get: A scannable QR code in text
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, output is QR blocks
   sign_in: 'no'
   novelty: fresh
@@ -669,7 +671,7 @@ tricks:
   how: curl parrot.live
   you_get: Animated party parrot
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, stream started
   sign_in: 'no'
   novelty: known
@@ -686,7 +688,7 @@ tricks:
   how: curl rate.sx/btc
   you_get: ASCII price chart
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: fresh
@@ -703,7 +705,7 @@ tricks:
   how: http.cat/404
   you_get: A cat photo for each status code
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200, image/jpeg
   sign_in: 'no'
   novelty: known
@@ -720,7 +722,7 @@ tricks:
   how: web.archive.org/web/2010/github.com
   you_get: GitHub in 2010
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known
@@ -737,7 +739,7 @@ tricks:
   how: ghchart.rshah.org/torvalds
   you_get: The green-square graph as an SVG
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: fresh
@@ -754,7 +756,7 @@ tricks:
   how: crontab.guru/#*/5_*_*_*_*
   you_get: Plain English "every 5 minutes"
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known
@@ -771,7 +773,7 @@ tricks:
   how: jsoncrack.com/editor
   you_get: Paste JSON, get a node graph
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200 (SPA)
   sign_in: 'no'
   novelty: known
@@ -788,7 +790,7 @@ tricks:
   how: carbon.now.sh / ray.so
   you_get: Beautiful code images
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200 both
   sign_in: 'no'
   novelty: known
@@ -805,7 +807,7 @@ tricks:
   how: mermaid.live
   you_get: Text becomes a diagram as you type
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known
@@ -822,7 +824,7 @@ tricks:
   how: transform.tools
   you_get: JSON to TypeScript/Zod as you type
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: fresh
@@ -839,7 +841,7 @@ tricks:
   how: regex101.com
   you_get: Matches highlighted, with an explanation
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known
@@ -856,7 +858,7 @@ tricks:
   how: caniuse.com/css-has
   you_get: Browser support grid
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known
@@ -873,7 +875,7 @@ tricks:
   how: pagespeed.web.dev, enter a URL
   you_get: Lighthouse scores
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200 page
   sign_in: 'no'
   novelty: known
@@ -890,7 +892,7 @@ tricks:
   how: duck.ai
   you_get: Multiple models, no account
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200 page
   sign_in: 'no'
   novelty: fresh
@@ -907,7 +909,7 @@ tricks:
   how: huggingface.co/chat
   you_get: Open models in a chat
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200 page
   sign_in: login for some features
   novelty: known
@@ -924,7 +926,7 @@ tricks:
   how: github.com/... -> codewiki.google/github.com/pallets/click
   you_get: An AI wiki of the repo
   status: partial
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: partial, 30 Oct, curl 200 SPA shell only; content not seen
   sign_in: unknown
   novelty: fresh
@@ -1026,7 +1028,7 @@ tricks:
   how: hoppscotch.io
   you_get: Postman in a tab
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known
@@ -1043,7 +1045,7 @@ tricks:
   how: excalidraw.com
   you_get: A hand-drawn whiteboard
   status: verified
-  checked: '2026-10-30'
+  checked: '2026-10-31'
   evidence: yes, 30 Oct, curl 200
   sign_in: 'no'
   novelty: known

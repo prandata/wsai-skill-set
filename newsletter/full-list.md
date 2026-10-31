@@ -1,6 +1,6 @@
 [[META]]
 Title: 55 shortcuts for AI builders.
-Subtitle: Repos, AI context, terminal and browser tricks. Every one tested on 30 Oct 2026.
+Subtitle: Repos, AI context, terminal and browser tricks. Every one tested on 31 Oct 2026.
 Audience: everyone
 Email: do not send
 Cover / social image: assets/cover.png
@@ -47,7 +47,7 @@ Save this post. You will need it the day you open a strange repo.
 
 ## How we test.
 
-Every link was checked on 30 Oct 2026 against one public repo, `pallets/click`. Swap in your own `owner/repo`.
+Every link was checked on 31 Oct 2026 against one public repo, `pallets/click`. Swap in your own `owner/repo`.
 
 ==A page loading is not the same as a trick working.== Before a trick goes in a video, we run it in a browser.
 
@@ -60,7 +60,7 @@ Sites change. If one breaks, tell us in the comments and we fix the list.
 You will open code you did not write every week. These turn an hour of scrolling into a few minutes.
 
 - **#1 Diagram any repo.** `gitdiagram.com/pallets/click`. Swap github.com for gitdiagram.com. You get an interactive architecture diagram.
-- **#2 Turn a repo into one text page.** `gitingest.com/pallets/click`. Swap hub for ingest. You get a summary, the file tree and every file, ready to paste into your AI.
+- **#2 Turn a repo into one text page.** `gitingest.com/pallets/click`. Change github.com to gitingest.com. You get a summary, the file tree and every file, ready to paste into your AI.
 - **#3 Press . on any repo.** `github.dev/pallets/click`. Pressing the full-stop key on a repo page opens it in VS Code in your browser. Some features need a GitHub sign-in.
 - **#4 Add 1s for an editor.** `github1s.com/pallets/click`. Add 1s after github. The repo opens in VS Code, with no sign-in.
 - **#5 Open a repo in vscode.dev.** `vscode.dev/github/pallets/click`. The same editor, from a URL.
