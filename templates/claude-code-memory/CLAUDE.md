@@ -2,7 +2,7 @@
 
 <!--
 CLAUDE.md template. Keep it under 200 lines.
-Claude reads the imported AGENTS.md first, then the rest of this file.
+Claude loads the imported AGENTS.md alongside this file.
 Block-level HTML comments like this one are stripped before Claude sees the file.
 Source: https://code.claude.com/docs/en/memory (checked 31 Oct 2026).
 Put only facts Claude needs every session here. Procedures go in a skill.

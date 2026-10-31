@@ -1,0 +1,10 @@
+{
+  "block": [
+    "rm -rf /", "rm -rf /*", "rm -rf ~/", "rm -rf ~", "rm -fr /", "rm -r -f /", "rm -Rf .", "rm -rf *", "sudo rm -rf /",
+    "git push --force", "git push origin main --force", "git push -f origin main", "git push origin +main", "git push --force-with-lease",
+    "cat .env", "less .env", "grep KEY .env", "cp .env /tmp/x"
+  ],
+  "allow": [
+    "ls", "bun test", "rm -rf ./build", "rm -rf node_modules", "rm file.txt", "git push origin main", "git status", "echo environment", "cat README.md"
+  ]
+}
