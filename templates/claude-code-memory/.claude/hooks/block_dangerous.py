@@ -62,8 +62,8 @@ def segments(toks):
     out.append(seg)
     return [s for s in out if s]
 
-HEREDOC = re.compile(r"(\bcat\b[^\n<]*<<-?\s*(['\"]?)(\w+)\2[^\n]*)\n(.*?)\n[ \t]*\3[ \t]*(?=\n|$)", re.S)
-PIPE_TO_SHELL = re.compile(r"\|\s*(?:sudo\s+)?(?:\S*/)?(?:ba|z|da|k)?sh\b")
+HEREDOC = re.compile(r"((?<![\w./-])[\w./-]+[^\n<]*<<-?\s*(['\"]?)(\w+)\2[^\n]*)\n(.*?)\n[ \t]*\3[ \t]*(?=\n|$)", re.S)
+PIPE_TO_SHELL = re.compile(r"(?:\||^\s*)\s*(?:(?:sudo|doas|env|nohup|nice|timeout|command|exec)\b[^|;&]*?\s+)?(?:\S*/)?(?:ba|z|da|k)?sh\b")
 BRACES = re.compile(r"\{([^{}]*,[^{}]*)\}")
 
 def expand(tok, budget=[0]):
@@ -94,6 +94,10 @@ def check(text, depth=0):
     text = HEREDOC.sub(strip, text)
     for inner in re.findall(r"`([^`]*)`", text) + re.findall(r"\$\(([^()]*)\)", text):
         check(inner, depth + 1)
+    if re.search(r"(?:^|[\s;&|(])(?:\S*/)?(?:(?:ba|z|da|k)?sh|source|\.)\s+(?:-\S+\s+)*<\(", text):
+        block("a shell reading a process substitution cannot be inspected: " + text.strip()[:80])
+    for inner in re.findall(r"[<>]\(([^()]*)\)", text):
+        check(inner, depth + 1)
     if hides_expansion(text):
         block("quoting form the hook cannot inspect ($'..', $\"..\" or IFS): " + text.strip()[:80])
     try:
@@ -120,13 +124,13 @@ def check(text, depth=0):
                         check(rest[j + 1], depth + 1)
                     if a == "<<<" and j + 1 < len(rest):
                         check(rest[j + 1], depth + 1)
-                if prev and all(posixpath.basename(x) in ("sudo", "env", "exec", "command", "nohup", "doas", "timeout", "nice") or x.startswith("-") or (k > 0 and seg[k - 1].startswith("-")) or re.fullmatch(r"[0-9.]+[smhd]?", x) for k, x in enumerate(seg[:i])) and not any(re.fullmatch(r"-[A-Za-z]*c[A-Za-z]*", a) or not a.startswith("-") for a in rest):
+                if prev and all(posixpath.basename(x) in ("sudo", "env", "exec", "command", "nohup", "doas", "timeout", "nice") or x.startswith("-") or re.fullmatch(r"\w+=.*", x) or (k > 0 and seg[k - 1].startswith("-")) or re.fullmatch(r"[0-9.]+[smhd]?", x) for k, x in enumerate(seg[:i])) and not any(re.fullmatch(r"-[A-Za-z]*c[A-Za-z]*", a) or not a.startswith("-") for a in rest):
                     check(" ".join(prev), depth + 1)   # echo '...' | sh
             if b == "rm":
                 flags = [a for a in rest if a.startswith("-")]
                 rec = any(a == "--recursive" or (not a.startswith("--") and re.search(r"[rR]", a)) for a in flags)
                 force = any(a == "--force" or (not a.startswith("--") and "f" in a) for a in flags)
-                if rec and force and any(danger(a) for a in rest if not a.startswith("-")):
+                if rec and any(danger(a) for a in rest if not a.startswith("-")):
                     block("recursive force-delete of a root, home or whole folder: " + " ".join(seg)[:80])
             if b == "find" and "-delete" in rest or (b == "find" and any(posixpath.basename(r) == "rm" for r in rest)):
                 paths = []
