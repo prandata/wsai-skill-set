@@ -1,6 +1,6 @@
 [[META]]
-Title: 55 shortcuts for AI builders.
-Subtitle: Repos, AI context, terminal and browser tricks. Every one tested on 31 Oct 2026.
+Title: 54 shortcuts for AI builders.
+Subtitle: Repos, AI context, terminal and browser tricks. Every one tested on 1 Nov 2026.
 Audience: everyone
 Email: do not send
 Cover / social image: assets/cover.png
@@ -23,9 +23,9 @@ Caption: From today's video. The repo is pallets/click, drawn by gitdiagram.com.
 
 Today's Skill Set video showed five of these links.
 
-This post has all of them: ==55 tricks, numbered, every one tested.==
+This post has all of them: ==54 tricks, numbered, every one tested.==
 
-**The five from the video:** gitdiagram (#1), gitingest (#2), OSS Insight (#6), github1s (#4), Git History (#7). The other 50 are new.
+**The five from the video:** gitdiagram (#1), gitingest (#2), OSS Insight (#6), github1s (#4), Git History (#7). The other 49 are new.
 
 **What's inside:**
 
@@ -33,9 +33,9 @@ This post has all of them: ==55 tricks, numbered, every one tested.==
 - **Give your AI the real code and docs:** #10 to #16
 - **Hidden GitHub URLs:** #17 to #26
 - **Notebooks and packages:** #27 to #31
-- **Terminal one-liners:** #32 to #37
-- **Everyday builder tools:** #38 to #51
-- **Browser tricks:** #52 to #55
+- **Terminal one-liners:** #32 to #36
+- **Everyday builder tools:** #37 to #50
+- **Browser tricks:** #51 to #54
 
 Save this post. You will need it the day you open a strange repo.
 
@@ -47,7 +47,7 @@ Save this post. You will need it the day you open a strange repo.
 
 ## How we test.
 
-Every link was checked on 31 Oct 2026 against one public repo, `pallets/click`. Swap in your own `owner/repo`.
+Every link was checked on 1 Nov 2026 against one public repo, `pallets/click`. Swap in your own `owner/repo`.
 
 ==A page loading is not the same as a trick working.== Before a trick goes in a video, we run it in a browser.
 
@@ -110,40 +110,39 @@ Know what you are installing before you install it.
 
 No install. Paste into any terminal.
 
-- **#32 Explain any shell command.** `explainshell.com/explain?cmd=tar+-xzvf+a.tgz`. Every flag, labelled.
-- **#33 Examples for any command.** `curl cheat.sh/tar`. Ready-to-copy examples in your terminal.
-- **#34 Weather in the terminal.** `curl wttr.in/Sydney`. A forecast as text art.
-- **#35 QR code in the terminal.** `curl qrenco.de/github.com`. A scannable QR code for any link.
-- **#36 A dancing parrot.** `curl parrot.live`. No reason. Just joy. Press Ctrl+C to stop.
-- **#37 Crypto prices in the terminal.** `curl rate.sx/btc`. A price chart as text.
+- **#32 Examples for any command.** `curl cheat.sh/tar`. Ready-to-copy examples in your terminal.
+- **#33 Weather in the terminal.** `curl wttr.in/Sydney`. A forecast as text art.
+- **#34 QR code in the terminal.** `curl qrenco.de/github.com`. A scannable QR code for any link.
+- **#35 A dancing parrot.** `curl parrot.live`. No reason. Just joy. Press Ctrl+C to stop.
+- **#36 Crypto prices in the terminal.** `curl rate.sx/btc`. A price chart as text.
 
 ## 6. Everyday builder tools.
 
 Small free tools that each save an hour.
 
-- **#38 A cat for every HTTP status.** `http.cat/404`. The easiest way to remember status codes.
-- **#39 See any site years ago.** `web.archive.org/web/2010/github.com`. GitHub as it looked in 2010.
-- **#40 Read a cron schedule.** `crontab.guru`. Type a cron line and read it in plain English.
-- **#41 See JSON as a graph.** `jsoncrack.com/editor`. Paste JSON and get a map you can read.
-- **#42 Good-looking code screenshots.** `carbon.now.sh`. Or ray.so. Clean images of your code.
-- **#43 Diagrams by typing.** `mermaid.live`. Type text, get a diagram, live.
-- **#44 JSON to types.** `transform.tools`. JSON to TypeScript or Zod as you type.
-- **#45 Test a regex.** `regex101.com`. Matches highlighted and explained.
-- **#46 Does it work in Safari?.** `caniuse.com/css-has`. Browser support for any web feature.
-- **#47 Grade a site's speed.** `pagespeed.web.dev`. Lighthouse scores for any URL.
-- **#48 Free AI chat, no account.** `duck.ai`. Several models, no sign-in.
-- **#49 Open-source AI chat.** `huggingface.co/chat`. Open models in a chat. Some features need a sign-in.
-- **#50 An API client in a tab.** `hoppscotch.io`. Send requests without installing anything.
-- **#51 A whiteboard by URL.** `excalidraw.com`. Hand-drawn diagrams, free.
+- **#37 A cat for every HTTP status.** `http.cat/404`. The easiest way to remember status codes.
+- **#38 See any site years ago.** `web.archive.org/web/2010/github.com`. GitHub as it looked in 2010.
+- **#39 Read a cron schedule.** `crontab.guru`. Type a cron line and read it in plain English.
+- **#40 See JSON as a graph.** `jsoncrack.com/editor`. Paste JSON and get a map you can read.
+- **#41 Good-looking code screenshots.** `carbon.now.sh`. Or ray.so. Clean images of your code.
+- **#42 Diagrams by typing.** `mermaid.live`. Type text, get a diagram, live.
+- **#43 JSON to types.** `transform.tools`. JSON to TypeScript or Zod as you type.
+- **#44 Test a regex.** `regex101.com`. Matches highlighted and explained.
+- **#45 Does it work in Safari?.** `caniuse.com/css-has`. Browser support for any web feature.
+- **#46 Grade a site's speed.** `pagespeed.web.dev`. Lighthouse scores for any URL.
+- **#47 Free AI chat, no account.** `duck.ai`. Several models, no sign-in.
+- **#48 Open-source AI chat.** `huggingface.co/chat`. Open models in a chat. Some features need a sign-in.
+- **#49 An API client in a tab.** `hoppscotch.io`. Send requests without installing anything.
+- **#50 A whiteboard by URL.** `excalidraw.com`. Hand-drawn diagrams, free.
 
 ## 7. Browser tricks.
 
 Already in your browser. Nothing to install.
 
-- **#52 Edit any web page.** `document.designMode = "on"`. Paste into the browser console, then type on the page. Good for mock-ups.
-- **#53 Full-page screenshot.** `DevTools → Cmd+Shift+P → "Capture full size screenshot"`. A full-page image with no extension.
-- **#54 A notepad in the address bar.** `data:text/html,<h1 contenteditable>`. Type it into the address bar for an instant notepad.
-- **#55 Find curated lists with Google.** `site:github.com "awesome" filetype:md`. Search operators that surface hand-picked lists.
+- **#51 Edit any web page.** `document.designMode = "on"`. Paste into the browser console, then type on the page. Good for mock-ups.
+- **#52 Full-page screenshot.** `DevTools → Cmd+Shift+P → "Capture full size screenshot"`. A full-page image with no extension.
+- **#53 A notepad in the address bar.** `data:text/html,<h1 contenteditable>`. Type it into the address bar for an instant notepad.
+- **#54 Find curated lists with Google.** `site:github.com "awesome" filetype:md`. Search operators that surface hand-picked lists.
 
 ---
 
@@ -152,7 +151,6 @@ Already in your browser. Nothing to install.
 These load, but we have not seen the full result work yet. They join the list once we have:
 
 - **Turn a repo into a podcast:** `gitpodcast.com/pallets/click`
-- **Count a repo's lines of code:** `ghloc.vercel.app/pallets/click`
 - **Run a JS repo in the browser:** `stackblitz.com/github/vitejs/vite`
 - **Search code with Sourcegraph:** `sourcegraph.com/github.com/pallets/click`
 - **See an npm dependency graph:** `npmgraph.js.org/?q=react`
