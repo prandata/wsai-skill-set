@@ -20,6 +20,16 @@ cp -r wsai-skill-set/skills/wsai-skill-set ~/.claude/skills/ && cp wsai-skill-se
 | [`ssh-key-audit`](skills/ssh-key-audit/SKILL.md) | Read-only audit of the SSH keys on your GitHub account: which keys at `github.com/<you>.keys` have no `.pub` file on this machine, and which are DSA or RSA under 3072 bits. Changes nothing. 52 offline cases in `tests/test_ssh_key_audit.py`. |
 | [`wsai-skill-set`](skills/wsai-skill-set/SKILL.md) | Gives your agent 55+ tested shortcuts: change-one-word GitHub URLs, repo-to-AI-context tools, terminal one-liners. |
 
+## Agents (Claude Code subagents)
+
+```bash
+mkdir -p .claude/agents && cp wsai-skill-set/agents/repro-reviewer/repro-reviewer.md .claude/agents/
+```
+
+| Agent | What it does |
+|---|---|
+| [`repro-reviewer`](agents/repro-reviewer/README.md) | Read-only code reviewer that must reproduce every finding before it reports it: each one comes with the command it ran and the quoted output, a claim it can't run blocks a PASS, and it ends with `VERDICT: PASS\|FIX @ <sha>`. Three saved example runs (a real bug, a false alarm, one it can't run) and offline checks in `tests/test_repro_reviewer.py`. |
+
 ## Templates
 
 [`templates/claude-code-memory/`](templates/claude-code-memory/): copy-paste CLAUDE.md, AGENTS.md, SKILL.md and a

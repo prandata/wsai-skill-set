@@ -1,0 +1,144 @@
+# repro-reviewer example: 01-real-bug
+
+Sample repo: make-sample-repo.sh, branch real-bug @ 8bc7eded2f4b0ea4f940d16a09c118fcc7f4b536
+Run: 2026-11-01T12:36:25Z, 2.1.316 (Claude Code), model claude-opus-5-5, exit 0, 5 turns, 34 s
+Command: run-example.sh (claude -p --agent repro-reviewer, isolated from user settings)
+
+## Prompt
+
+    Review the last commit on this branch.
+
+## Tool calls (4, in order)
+
+[1] Bash: git rev-parse HEAD && git status --porcelain && git log --oneline -3 && git show HEAD --stat && git diff HEAD~1 HEAD
+--- output:
+    8bc7eded2f4b0ea4f940d16a09c118fcc7f4b536
+    8bc7ede pricing: simpler split_bill
+    241e455 tinyshop: split_bill, parse_duration, download_link
+    commit 8bc7eded2f4b0ea4f940d16a09c118fcc7f4b536
+    Author: Sample Author <author@example.com>
+    Date:   Tue Jan 6 09:00:00 2026 +0000
+
+        pricing: simpler split_bill
+        
+        One expression instead of divmod. Shares still add up to the total.
+
+     tinyshop/pricing.py | 9 +++------
+     1 file changed, 3 insertions(+), 6 deletions(-)
+    diff --git a/tinyshop/pricing.py b/tinyshop/pricing.py
+    index 26fdc47..4b2d5fb 100644
+    --- a/tinyshop/pricing.py
+    +++ b/tinyshop/pricing.py
+    @@ -1,9 +1,6 @@
+     def split_bill(total_cents, people):
+    -    """Split a bill into whole-cent shares that add up to total_cents.
+    -
+    -    The first (total_cents % people) shares get one extra cent.
+    -    """
+    +    """Split a bill into whole-cent shares that add up to total_cents."""
+         if people < 1:
+             raise ValueError("people must be at least 1")
+    -    base, rem = divmod(total_cents, people)
+    -    return [base + 1 if i < rem else base for i in range(people)]
+    +    share = round(total_cents / people)
+    +    return [share] * people
+
+[2] Bash: ls; ls tests 2>/dev/null; python3 -I -c "
+    import sys; sys.path.insert(0,'.')
+    from tinyshop.pricing import split_bill
+    for t,p in [(100,3),(200,3),(10,4),(99,1),(0,5)]:
+        s=split_bill(t,p); print(t,p,s,sum(s),sum(s)==t)
+    "; echo exit=$?; python3 -m pytest -q 2>&1 | tail -5; echo exit=$?
+--- output:
+    README.md
+    tests
+    tinyshop
+    __init__.py
+    test_durations.py
+    test_links.py
+    test_pricing.py
+    100 3 [33, 33, 33] 99 False
+    200 3 [67, 67, 67] 201 False
+    10 4 [2, 2, 2, 2] 8 False
+    99 1 [99] 99 True
+    0 5 [0, 0, 0, 0, 0] 0 True
+    exit=0
+    /opt/homebrew/opt/python@3.14/bin/python3.14: No module named pytest
+    exit=0
+
+[3] Bash: cat tests/test_pricing.py; python3 -m unittest discover -s tests -t . 2>&1 | tail -5; echo exit=$?
+--- output:
+    import unittest
+    from tinyshop.pricing import split_bill
+
+
+    class SplitBill(unittest.TestCase):
+        def test_even(self):
+            self.assertEqual(split_bill(900, 3), [300, 300, 300])
+
+        def test_no_people(self):
+            with self.assertRaises(ValueError):
+                split_bill(900, 0)
+
+
+    if __name__ == "__main__":
+        unittest.main()
+    .....
+    ----------------------------------------------------------------------
+    Ran 5 tests in 0.001s
+
+    OK
+    exit=0
+
+[4] Bash: python3 -m unittest discover -s tests -t . >/dev/null 2>&1; echo unittest_exit=$?; git show HEAD~1:tinyshop/pricing.py | python3 -I -c "import sys; exec(sys.stdin.read()); print(split_bill(100,3), split_bill(200,3), split_bill(10,4))"; echo exit=$?
+--- output:
+    unittest_exit=0
+    [34, 33, 33] [67, 67, 66] [3, 3, 2, 2]
+    exit=0
+
+## Final report
+
+## Reviewed
+`HEAD` (branch tip) @ 8bc7eded2f4b0ea4f940d16a09c118fcc7f4b536, "pricing: simpler split_bill". One file changed: `tinyshop/pricing.py` (+3/−6). I got the diff with `git diff HEAD~1 HEAD`. The working tree is clean: `git status --porcelain` printed nothing.
+
+## Findings (reproduced)
+### F1: `split_bill` shares no longer add up to the total
+Where: `tinyshop/pricing.py:5-6`
+
+The new code rounds once (`share = round(total_cents / people)`) and gives everyone that same share. Whenever the total doesn't divide evenly, the shares miss the total: they come up short when the result rounds down and go over when it rounds up.
+
+Command:
+    python3 -I -c "import sys; sys.path.insert(0,'.'); from tinyshop.pricing import split_bill
+    for t,p in [(100,3),(200,3),(10,4),(99,1),(0,5)]:
+        s=split_bill(t,p); print(t,p,s,sum(s),sum(s)==t)"
+Output (exit 0):
+    100 3 [33, 33, 33] 99 False
+    200 3 [67, 67, 67] 201 False
+    10 4 [2, 2, 2, 2] 8 False
+    99 1 [99] 99 True
+    0 5 [0, 0, 0, 0, 0] 0 True
+Expected: `sum(split_bill(t, p)) == t` for every input. The docstring, which this commit kept, promises this, and so does the commit message. The parent commit got it right: `[34, 33, 33] [67, 67, 66] [3, 3, 2, 2]`.
+Fix: Revert to `base, rem = divmod(total_cents, people); return [base + 1 if i < rem else base for i in range(people)]`. Also add a test with an uneven split, for example `split_bill(100, 3) == [34, 33, 33]` or `sum(...) == 100`.
+
+## Claims checked
+| Claim | Source | Result | Evidence |
+|---|---|---|---|
+| "Shares still add up to the total." | Commit message | refuted | `split_bill(100,3)` → `[33, 33, 33]`, sum 99; `split_bill(200,3)` → `[67, 67, 67]`, sum 201 |
+| "Split a bill into whole-cent shares that add up to total_cents." | Docstring kept by the commit | refuted | Same output as above |
+| Project tests pass | Implied | confirmed, but they don't cover this | `Ran 5 tests in 0.001s` / `OK`, exit 0. `tests/test_pricing.py` only checks `split_bill(900, 3) == [300, 300, 300]` and that `people=0` raises, so it never tries an uneven split. |
+
+## Not reproduced
+None.
+
+## Not run
+`pytest` isn't installed (`No module named pytest`). I ran the same tests with `unittest` instead, since they are `unittest.TestCase` classes.
+
+## Commands run
+1. `git rev-parse HEAD && git status --porcelain && git log --oneline -3 && git show HEAD --stat && git diff HEAD~1 HEAD`: exit 0
+2. `ls; ls tests; python3 -I -c "<check that shares sum to the total>"; python3 -m pytest -q | tail -5`: Python exit 0. pytest isn't installed, and the `exit=0` printed after it is from `tail`.
+3. `cat tests/test_pricing.py; python3 -m unittest discover -s tests -t . | tail -5`: printed `OK`
+4. `python3 -m unittest discover -s tests -t .` (exit code captured): exit 0. Then `git show HEAD~1:tinyshop/pricing.py | python3 -I -c "<parent's behaviour>"`: exit 0
+
+I made no scratch folder; everything ran as inline one-liners.
+
+VERDICT: FIX @ 8bc7eded2f4b0ea4f940d16a09c118fcc7f4b536
