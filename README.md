@@ -20,6 +20,12 @@ cp -r wsai-skill-set/skills/wsai-skill-set ~/.claude/skills/ && cp wsai-skill-se
 | [`ssh-key-audit`](skills/ssh-key-audit/SKILL.md) | Read-only audit of the SSH keys on your GitHub account: which keys at `github.com/<you>.keys` have no `.pub` file on this machine, and which are DSA or RSA under 3072 bits. Changes nothing. 52 offline cases in `tests/test_ssh_key_audit.py`. |
 | [`wsai-skill-set`](skills/wsai-skill-set/SKILL.md) | Gives your agent 55+ tested shortcuts: change-one-word GitHub URLs, repo-to-AI-context tools, terminal one-liners. |
 
+## MCP servers
+
+| Server | What it does |
+|---|---|
+| [`notes-readonly`](mcp/notes-readonly/README.md) | Lets Claude Code list, search and read one folder of your Markdown notes, and nothing else. No write tool; `../`, absolute paths and every symlink are refused; a per-file size cap. 99 lines on the official MCP Python SDK, 34 tests. Install: `claude mcp add --scope user --transport stdio notes -- uv run --script /path/to/server.py ~/notes`. |
+
 ## Templates
 
 [`templates/claude-code-memory/`](templates/claude-code-memory/): copy-paste CLAUDE.md, AGENTS.md, SKILL.md and a
