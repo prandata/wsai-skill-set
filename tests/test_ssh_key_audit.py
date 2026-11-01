@@ -108,6 +108,7 @@ try:
     check("clean account exits 0", rc == 0, out + err)
     check("clean account names the matching file", f"{fingerprint(mine[1])}  ED25519 256   local: id_mine.pub" in out, out)
     check("clean account says nothing changed", "read-only, nothing changed" in out, out)
+    check("curl runs with -q first, so a ~/.curlrc cannot add an output file", log.startswith("-q "), log)
     check("curl asked for the .keys URL over https only",
           "https://github.com/octo-cat.keys" in log and "--proto =https" in log and "--proto-redir =https" in log, log)
 
@@ -169,6 +170,11 @@ try:
     rc2, out2, _, _ = run(["--dry-run", "octo-cat"], keys_body(mine, stranger, rsa2048, dsa))
     check("--dry-run gives the same result as the default", (rc1, out1) == (rc2, out2), out1 + "\n---\n" + out2)
     check("home folder unchanged after runs (files, modes, contents, folder times)", snapshot(home) == before)
+    # bash writes each here-document to a temporary file and unlinks it at once, so no folder
+    # snapshot can see it. Check the source instead: no here-documents or here-strings.
+    src = [l for l in open(script).read().splitlines() if not l.lstrip().startswith("#")]
+    check("no temporary files: the script has no here-documents", not any("<<" in l for l in src),
+          "\n".join(l for l in src if "<<" in l))
 
     # 7. Edge cases.
     empty_home = os.path.join(tmp, "empty-home")
@@ -181,11 +187,25 @@ try:
     check("CRLF line endings handled", rc == 0 and "local: id_mine.pub" in out, out + err)
     rc, out, err, _ = run(["octo-cat"], keys_body(mine).rstrip("\n"))
     check("no trailing newline handled", rc == 0, out + err)
-    open(os.path.join(ssh, "broken.pub"), "w").write("not a key\n")
     open(os.path.join(ssh, "nonewline.pub"), "w").write(" ".join(stranger))
     rc, out, err, _ = run(["octo-cat"], keys_body(mine, stranger))
-    check("unreadable local .pub warns and continues", "could not read a public key from" in err and "broken.pub" in err, err)
     check(".pub file without a final newline still read", rc == 0 and "local: nonewline.pub" in out, out + err)
+    open(os.path.join(ssh, "broken.pub"), "w").write("not a key\n")
+    rc, out, err, _ = run(["octo-cat"], keys_body(mine, stranger))
+    check("unreadable local .pub warns, continues, and counts as a finding",
+          rc == 1 and "could not read a public key from" in err and "broken.pub" in err
+          and "1 unreadable" in out, out + err)
+    os.remove(os.path.join(ssh, "broken.pub"))
+    rc, out, err, _ = run(["octo-cat"], keys_body(mine) + "ssh-dss !!!!\n")
+    check("malformed DSA line is unreadable, not given a fake fingerprint",
+          rc == 1 and "COULD NOT READ" in out and "47DEQpj8HBSa" not in out, out + err)
+    dsa_home = os.path.join(tmp, "dsa-home")
+    os.makedirs(os.path.join(dsa_home, ".ssh"))
+    open(os.path.join(dsa_home, ".ssh", "id_dsa.pub"), "w").write(" ".join(dsa) + " old laptop\n")
+    rc, out, err, _ = run(["octo-cat"], keys_body(mine), home=dsa_home)
+    check("local DSA key shown with its file name",
+          rc == 1 and f"{fingerprint(dsa[1])}  DSA   id_dsa.pub\n" in out
+          and f"{fingerprint(dsa[1])}  id_dsa.pub   OLD: DSA" in out, out + err)
     rc, out, err, _ = run(["octo-cat"], keys_body(mine) + "ssh-ed25519 AAAAnotbase64!!\n")
     check("unreadable GitHub key counted as a finding", rc == 1 and "COULD NOT READ" in out, out + err)
 finally:

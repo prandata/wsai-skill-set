@@ -33,7 +33,8 @@ parses.
 
 ## What it does
 
-1. Fetches `https://github.com/<user>.keys` over HTTPS only (20 second limit). GitHub's API for the same keys
+1. Fetches `https://github.com/<user>.keys` over HTTPS only (20 second limit), with
+   `curl -q` so a `~/.curlrc` cannot add an output or cookie file. GitHub's API for the same keys
    says it "is accessible by anyone", so no token is needed or sent.
    ([docs.github.com/en/rest/users/keys](https://docs.github.com/en/rest/users/keys))
 2. Fingerprints each key with `ssh-keygen -E sha256 -lf`, the same `SHA256:` format GitHub shows in
@@ -53,7 +54,7 @@ parses.
 | Exit | Meaning | What to tell the user |
 |---|---|---|
 | 0 | Every GitHub key has a `.pub` file here, none is old. | Clean. A `.pub` file does not prove the private key is still here. |
-| 1 | Findings. | Each `NOT IN LOCAL .pub FILES` line is a key GitHub accepts that this machine has no public file for: another computer, or one they can't account for. Each `OLD:` line needs replacing. |
+| 1 | Findings. | Each `NOT IN LOCAL .pub FILES` line is a key GitHub accepts that this machine has no public file for: another computer, or one they can't account for. Each `OLD:` line needs replacing. A `COULD NOT READ` line, or a warning about a local `.pub` file, means a key it could not parse: check it by hand. |
 | 2 | Bad username, bad option, or a missing tool. | Fix the input. Nothing was fetched. |
 | 3 | No such GitHub user (HTTP 404). | Check the spelling. The audit did not run. |
 | 4 | Network error, other HTTP status, or a page that is not a key list (a proxy or Wi-Fi login page). | The audit did not run. Retry on a working connection. |

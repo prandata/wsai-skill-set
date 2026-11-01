@@ -22,20 +22,20 @@ PROG="audit.sh"
 SSH_DIR="${HOME:-}/.ssh"
 user=""
 
+# There are no here-documents in this script: bash writes each one to a temporary file.
 usage() {
-  cat <<'EOF'
-Usage: audit.sh [--dry-run] [--ssh-dir DIR] <github-username>
-
-Compares the SSH keys on https://github.com/<github-username>.keys with the *.pub files
-in ~/.ssh (or DIR), by SHA256 fingerprint, and flags DSA keys and RSA keys under 3072 bits.
-
-  --dry-run      The default and only mode. Nothing is ever changed.
-  --ssh-dir DIR  Read *.pub files from DIR instead of ~/.ssh.
-  -h, --help     Show this help.
-
-Exit codes: 0 clean, 1 findings, 2 usage, 3 no such user, 4 network or bad response,
-5 no SSH keys on GitHub.
-EOF
+  printf '%s\n' \
+    'Usage: audit.sh [--dry-run] [--ssh-dir DIR] <github-username>' \
+    '' \
+    'Compares the SSH keys on https://github.com/<github-username>.keys with the *.pub files' \
+    'in ~/.ssh (or DIR), by SHA256 fingerprint, and flags DSA keys and RSA keys under 3072 bits.' \
+    '' \
+    '  --dry-run      The default and only mode. Nothing is ever changed.' \
+    '  --ssh-dir DIR  Read *.pub files from DIR instead of ~/.ssh.' \
+    '  -h, --help     Show this help.' \
+    '' \
+    'Exit codes: 0 clean, 1 findings, 2 usage, 3 no such user, 4 network or bad response,' \
+    '5 no SSH keys on GitHub.'
 }
 
 die() { # die <exit-code> <message>
@@ -92,7 +92,7 @@ old_reason() {
 # Uses ssh-keygen. For DSA keys, which OpenSSH 10 no longer parses, it computes the same
 # SHA256 fingerprint (base64 of the SHA-256 of the key blob, no padding) with openssl.
 fingerprint_line() {
-  local line="$1" out bits fp type ktype blob
+  local line="$1" out bits fp type ktype blob size
   if out=$(printf '%s\n' "$line" | ssh-keygen -E sha256 -lf - 2>/dev/null) && [ -n "$out" ]; then
     bits=$(printf '%s\n' "$out" | awk 'NR==1{print $1}')
     fp=$(printf '%s\n' "$out" | awk 'NR==1{print $2}')
@@ -102,19 +102,28 @@ fingerprint_line() {
   fi
   ktype=$(printf '%s\n' "$line" | awk '{print $1}')
   blob=$(printf '%s\n' "$line" | awk '{print $2}')
-  if [ "$ktype" = "ssh-dss" ] && [ -n "$blob" ] && command -v openssl >/dev/null 2>&1; then
-    fp=$(printf '%s' "$blob" | openssl base64 -d -A 2>/dev/null | openssl dgst -sha256 -binary 2>/dev/null \
-      | openssl base64 -A 2>/dev/null | tr -d '=')
-    [ -n "$fp" ] || return 1
-    printf 'SHA256:%s\tDSA\t\n' "$fp"
-    return 0
-  fi
-  return 1
+  [ "$ktype" = "ssh-dss" ] || return 1
+  command -v openssl >/dev/null 2>&1 || return 1
+  # A real ssh-dss blob is base64 that starts with the encoded name "ssh-dss" (AAAAB3NzaC1kc3M)
+  # and carries four large numbers, so it decodes to hundreds of bytes. Anything else is unreadable.
+  case "$blob" in
+    *[!A-Za-z0-9+/=]*) return 1 ;;
+    AAAAB3NzaC1kc3M*) ;;
+    *) return 1 ;;
+  esac
+  size=$(printf '%s' "$blob" | openssl base64 -d -A 2>/dev/null | wc -c | tr -d ' ')
+  [ "${size:-0}" -ge 300 ] 2>/dev/null || return 1
+  fp=$(printf '%s' "$blob" | openssl base64 -d -A 2>/dev/null | openssl dgst -sha256 -binary 2>/dev/null \
+    | openssl base64 -A 2>/dev/null | tr -d '=')
+  [ -n "$fp" ] || return 1
+  printf 'SHA256:%s\tDSA\t\n' "$fp"
 }
 
 # ---------- 1. Fetch the GitHub side ----------
+# -q must come first: it stops curl reading ~/.curlrc, which could otherwise add an output file,
+# a cookie jar or a trace file to this run.
 url="https://github.com/${user}.keys"
-resp=$(curl -sS -L --proto '=https' --proto-redir '=https' --max-time 20 -w "${NL}%{http_code}" "$url")
+resp=$(curl -q -sS -L --proto '=https' --proto-redir '=https' --max-time 20 -w "${NL}%{http_code}" "$url")
 rc=$?
 if [ "$rc" -ne 0 ]; then
   die 4 "could not reach $url (curl exit $rc). Check your connection; the audit did not run."
@@ -129,15 +138,18 @@ esac
 
 body=$(printf '%s' "$body" | tr -d '\r')
 gh_lines=""
-while IFS= read -r line; do
+# Split on newlines with globbing off (set -f), so no line is expanded as a file pattern.
+# Empty lines drop out of the split.
+set -f
+IFS="$NL"
+for line in $body; do
   case "$line" in
-    "") continue ;;
     ssh-*|ecdsa-sha2-*|sk-ssh-*|sk-ecdsa-*) gh_lines="${gh_lines}${line}${NL}" ;;
     *) die 4 "$url did not return an SSH key list (first bad line starts: '$(printf '%.20s' "$line")'). A proxy or login page may be in the way; the audit did not run." ;;
   esac
-done <<EOF
-$body
-EOF
+done
+unset IFS
+set +f
 
 if [ -z "$gh_lines" ]; then
   die 5 "'$user' has no SSH keys on GitHub, so there is nothing to compare. If you push over SSH with this account, check that this is the right username."
@@ -180,8 +192,10 @@ old=0
 unread=0
 gh_fps=""
 report=""
-while IFS= read -r line; do
-  [ -n "$line" ] || continue
+set -f
+IFS="$NL"
+for line in $gh_lines; do
+  unset IFS
   gh_count=$((gh_count + 1))
   ktype=$(printf '%s\n' "$line" | awk '{print $1}')
   if ! row=$(fingerprint_line "$line"); then
@@ -206,14 +220,21 @@ while IFS= read -r line; do
     old=$((old + 1))
   fi
   report="${report}  ${fp}  ${type}${bits:+ $bits}   ${status}${NL}"
-done <<EOF
-$gh_lines
-EOF
+done
+unset IFS
+set +f
 
 local_only=""
 local_old=""
-while IFS="$TAB" read -r lfp ltype lbits lname; do
-  [ -n "$lfp" ] || continue
+set -f
+IFS="$NL"
+for lrow in $local_rows; do
+  unset IFS
+  # cut keeps empty fields (a DSA row has no bit count); read with IFS=tab would merge them.
+  lfp=$(printf '%s' "$lrow" | cut -f1)
+  ltype=$(printf '%s' "$lrow" | cut -f2)
+  lbits=$(printf '%s' "$lrow" | cut -f3)
+  lname=$(printf '%s' "$lrow" | cut -f4-)
   if ! printf '%s' "$gh_fps" | grep -qxF "$lfp"; then
     local_only="${local_only}  ${lfp}  ${ltype}${lbits:+ $lbits}   ${lname}${NL}"
   fi
@@ -222,9 +243,9 @@ while IFS="$TAB" read -r lfp ltype lbits lname; do
     local_old="${local_old}  ${lfp}  ${lname}   OLD: ${reason}${NL}"
     old=$((old + 1))
   fi
-done <<EOF
-$local_rows
-EOF
+done
+unset IFS
+set +f
 
 echo "ssh-key-audit: github.com/${user}.keys compared with ${SSH_DIR}/*.pub (read-only, nothing changed)"
 echo "GitHub keys: $gh_count   Local public keys: $local_count"
@@ -243,6 +264,7 @@ if [ -n "$local_old" ]; then
 fi
 echo
 
+unread=$((unread + local_warn))
 findings=$((unmatched + old + unread))
 if [ "$findings" -eq 0 ]; then
   echo "Result: clean. Every GitHub key has a .pub file here and none is an old type."
