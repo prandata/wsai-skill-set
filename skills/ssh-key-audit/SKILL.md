@@ -21,9 +21,15 @@ Ask for the user's exact GitHub username. Don't guess it from a git email or a f
 else's account.
 
 ```bash
-bash scripts/audit.sh <github-username>                 # compares with ~/.ssh/*.pub
-bash scripts/audit.sh --ssh-dir /path/to/keys <user>    # another folder of .pub files
+bash "${CLAUDE_SKILL_DIR}/scripts/audit.sh" <github-username>                 # compares with ~/.ssh/*.pub
+bash "${CLAUDE_SKILL_DIR}/scripts/audit.sh" --ssh-dir /path/to/keys <user>    # another folder of .pub files
 ```
+
+`${CLAUDE_SKILL_DIR}` is the folder that holds this `SKILL.md`. Claude Code fills it in before you see the
+command, so the script is found wherever the skill is installed (personal, project or plugin) and from any
+working directory. A bare `scripts/audit.sh` only works when you happen to be inside the skill folder. The
+quotes keep it working if the path has a space. Outside Claude Code the variable is not set: run the script by its
+full path.
 
 `--dry-run` is accepted and is the default. There is no other mode: `--apply`, `--fix`, `--delete` and
 `--no-dry-run` are refused with exit 2.
@@ -103,6 +109,7 @@ An agent runs commands as the user, so treat its access to keys with care.
 
 Checked 1 Nov 2026.
 
+- Claude Code, Skills (`${CLAUDE_SKILL_DIR}` substitution and the "codebase-visualizer" example, fetched 1 Nov 2026): https://code.claude.com/docs/en/skills
 - GitHub REST API, SSH keys: https://docs.github.com/en/rest/users/keys
 - GitHub, Reviewing your SSH keys: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/reviewing-your-ssh-keys
 - GitHub, Generating a new SSH key: https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
