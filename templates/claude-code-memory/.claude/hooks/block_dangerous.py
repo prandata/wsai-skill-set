@@ -10,6 +10,10 @@ except Exception:
     block("could not read the command")
 
 SEPS = {";", "&", "&&", "|", "||", "(", ")", "\n", ";;", "|&"}
+# shlex joins a run of punctuation into one token ("&&\n"), so split it back into operators. Redirects such as 2>&1 stay whole.
+OPS = re.compile(r"&&|\|\||;;|\|&|<<<|<<-?|>>|>&|<&|&>|>\||<>|[;&|()<>\n]")
+# A duration after timeout or nice: needs a digit, so a bare "." (the dot command) is not skipped.
+DURATION = r"(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)[smhd]?"
 SHELLS = {"bash", "sh", "zsh", "dash", "ksh"}
 DANGER = {"/", "/*", "~", "~/*", "~/.*", ".", "..", "*", "**", ".*", "../*", "$HOME", "${HOME}",
           "$HOME/*", "${HOME}/*", "$PWD", "${PWD}", "$PWD/*", "${PWD}/*"}
@@ -50,7 +54,7 @@ def lex(text):
     s.whitespace_split = True
     s.whitespace = " \t\r"
     s.commenters = ""
-    return list(s)
+    return [p for t in s for p in (OPS.findall(t) if t and set(t) <= set(";&|()<>\n") else [t])]
 
 def segments(toks):
     seg, out = [], []
@@ -75,7 +79,7 @@ def command_word(seg):
     i = 0
     while i < len(seg):
         w = seg[i]
-        if posixpath.basename(w) in WRAPPERS | {"xargs", "parallel"} or w in ("{", "!", "--") or re.fullmatch(r"\w+=.*", w) or re.fullmatch(r"[0-9.]+[smhd]?", w):
+        if posixpath.basename(w) in WRAPPERS | {"xargs", "parallel"} or w in ("{", "!", "--") or re.fullmatch(r"\w+=.*", w) or re.fullmatch(DURATION, w):
             i += 1
         elif w in ("-u", "-g", "-C", "-n", "-k", "-I", "-L", "-P") and i + 1 < len(seg):
             i += 2
@@ -149,7 +153,7 @@ def check(text, depth=0):
                         check(rest[j + 1], depth + 1)
                     if a == "<<<" and j + 1 < len(rest):
                         check(rest[j + 1], depth + 1)
-                if prev and all(posixpath.basename(x) in WRAPPERS or x.startswith("-") or re.fullmatch(r"\w+=.*", x) or (k > 0 and seg[k - 1].startswith("-")) or re.fullmatch(r"[0-9.]+[smhd]?", x) for k, x in enumerate(seg[:i])) and not any(re.fullmatch(r"-[A-Za-z]*c[A-Za-z]*", a) or not a.startswith("-") for a in rest):
+                if prev and all(posixpath.basename(x) in WRAPPERS or x.startswith("-") or re.fullmatch(r"\w+=.*", x) or (k > 0 and seg[k - 1].startswith("-")) or re.fullmatch(DURATION, x) for k, x in enumerate(seg[:i])) and not any(re.fullmatch(r"-[A-Za-z]*c[A-Za-z]*", a) or not a.startswith("-") for a in rest):
                     check(" ".join(prev), depth + 1)   # echo '...' | sh
             cw = command_word(seg)
             if b == "rm" and not (cw is not None and posixpath.basename(seg[cw]) == "git" and cw < i):
