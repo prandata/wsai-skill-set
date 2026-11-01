@@ -1,0 +1,185 @@
+# repro-reviewer example: 02-false-alarm
+
+Sample repo: make-sample-repo.sh, branch false-alarm @ 89771d2e319f29156908bdfe2e7043b487f870f4
+Run: 2026-11-01T12:53:59Z, 2.1.316 (Claude Code), model claude-opus-5-5, exit 0, 6 turns, 32 s
+Command: run-example.sh (claude -p --agent repro-reviewer, isolated from user settings)
+
+## Prompt
+
+    Review the last commit on this branch. There is one comment on the pull request, from a lint bot: "parse_duration('90s') returns 9, because the regex only captures a single digit. Please fix before merging."
+
+## Tool calls (5, in order)
+
+[1] Bash: git rev-parse HEAD; echo "exit $?"; git status --porcelain; echo "exit $?"; git log --oneline -3; git diff HEAD~1 HEAD --stat; git diff HEAD~1 HEAD
+--- output:
+    89771d2e319f29156908bdfe2e7043b487f870f4
+    exit 0
+    exit 0
+    89771d2 durations: accept days (2d)
+    241e455 tinyshop: split_bill, parse_duration, download_link
+     tests/test_durations.py | 3 +++
+     tinyshop/durations.py   | 6 +++---
+     2 files changed, 6 insertions(+), 3 deletions(-)
+    diff --git a/tests/test_durations.py b/tests/test_durations.py
+    index f963581..8d205ac 100644
+    --- a/tests/test_durations.py
+    +++ b/tests/test_durations.py
+    @@ -6,6 +6,9 @@ class ParseDuration(unittest.TestCase):
+         def test_mixed(self):
+             self.assertEqual(parse_duration("1h30m"), 5400)
+     
+    +    def test_days(self):
+    +        self.assertEqual(parse_duration("2d"), 172800)
+    +
+         def test_bad(self):
+             for text in ["", "h", "10", "1x", "1h 30m"]:
+                 with self.assertRaises(ValueError):
+    diff --git a/tinyshop/durations.py b/tinyshop/durations.py
+    index 429fb82..1accb8a 100644
+    --- a/tinyshop/durations.py
+    +++ b/tinyshop/durations.py
+    @@ -1,11 +1,11 @@
+     import re
+     
+    -_PART = re.compile(r"(\d+)([hms])")
+    -_UNIT = {"h": 3600, "m": 60, "s": 1}
+    +_PART = re.compile(r"(\d+)([dhms])")
+    +_UNIT = {"d": 86400, "h": 3600, "m": 60, "s": 1}
+     
+     
+     def parse_duration(text):
+    -    """Parse '1h30m' or '90s' into seconds.
+    +    """Parse '2d', '1h30m' or '90s' into seconds.
+     
+         Units may repeat and are summed: '1m1m' is 120. Anything else raises ValueError.
+         """
+
+[2] Read: /tmp/tinyshop/tinyshop/durations.py
+--- output:
+    1	import re
+    2	
+    3	_PART = re.compile(r"(\d+)([dhms])")
+    4	_UNIT = {"d": 86400, "h": 3600, "m": 60, "s": 1}
+    5	
+    6	
+    7	def parse_duration(text):
+    8	    """Parse '2d', '1h30m' or '90s' into seconds.
+    9	
+    10	    Units may repeat and are summed: '1m1m' is 120. Anything else raises ValueError.
+    11	    """
+    12	    pos = total = 0
+    13	    for m in _PART.finditer(text):
+    14	        if m.start() != pos:
+    15	            break
+    16	        total += int(m.group(1)) * _UNIT[m.group(2)]
+    17	        pos = m.end()
+    18	    if pos == 0 or pos != len(text):
+    19	        raise ValueError(f"bad duration: {text!r}")
+    20	    return total
+    21	
+
+[3] Bash: ls; ls tests; cat tests/test_durations.py
+--- output:
+    README.md
+    tests
+    tinyshop
+    __init__.py
+    test_durations.py
+    test_links.py
+    test_pricing.py
+    import unittest
+    from tinyshop.durations import parse_duration
+
+
+    class ParseDuration(unittest.TestCase):
+        def test_mixed(self):
+            self.assertEqual(parse_duration("1h30m"), 5400)
+
+        def test_days(self):
+            self.assertEqual(parse_duration("2d"), 172800)
+
+        def test_bad(self):
+            for text in ["", "h", "10", "1x", "1h 30m"]:
+                with self.assertRaises(ValueError):
+                    parse_duration(text)
+
+
+    if __name__ == "__main__":
+        unittest.main()
+
+[4] Bash: PYTHONDONTWRITEBYTECODE=1 python3 -c "
+    from tinyshop.durations import parse_duration as p
+    for t in ['90s','2d','1d2h3m4s','1h30m','1m1m','10d','0d']: print(repr(t), p(t))
+    for t in ['d','2','2x','2d ','2D','-2d','2dd']:
+        try: print(repr(t), p(t))
+        except ValueError as e: print(repr(t), 'ValueError', e)
+    "; echo "exit $?"
+--- output:
+    '90s' 90
+    '2d' 172800
+    '1d2h3m4s' 93784
+    '1h30m' 5400
+    '1m1m' 120
+    '10d' 864000
+    '0d' 0
+    'd' ValueError bad duration: 'd'
+    '2' ValueError bad duration: '2'
+    '2x' ValueError bad duration: '2x'
+    '2d ' ValueError bad duration: '2d '
+    '2D' ValueError bad duration: '2D'
+    '-2d' ValueError bad duration: '-2d'
+    '2dd' ValueError bad duration: '2dd'
+    exit 0
+
+[5] Bash: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -t . -v 2>&1; echo "exit $?"; git show HEAD~1:tinyshop/durations.py | head -4; PYTHONDONTWRITEBYTECODE=1 python3 -c "
+    import re; print(re.compile(r'(\d+)([hms])').match('90s').groups())"; git status --porcelain; echo "status exit $?"
+--- output:
+    test_bad (tests.test_durations.ParseDuration.test_bad) ... ok
+    test_days (tests.test_durations.ParseDuration.test_days) ... ok
+    test_mixed (tests.test_durations.ParseDuration.test_mixed) ... ok
+    test_default_expiry (tests.test_links.DownloadLink.test_default_expiry) ... ok
+    test_even (tests.test_pricing.SplitBill.test_even) ... ok
+    test_no_people (tests.test_pricing.SplitBill.test_no_people) ... ok
+
+    ----------------------------------------------------------------------
+    Ran 6 tests in 0.001s
+
+    OK
+    exit 0
+    import re
+
+    _PART = re.compile(r"(\d+)([hms])")
+    _UNIT = {"h": 3600, "m": 60, "s": 1}
+    ('90', 's')
+    status exit 0
+
+## Final report
+
+## Reviewed
+HEAD (last commit, `89771d2 durations: accept days (2d)`) @ 89771d2e319f29156908bdfe2e7043b487f870f4. I got the diff with `git diff HEAD~1 HEAD`. Two files changed: `tinyshop/durations.py` (the regex and unit table now include `d` = 86400, and the docstring mentions it) and `tests/test_durations.py` (new `test_days` test). The tree was clean before and after my runs.
+
+## Findings (reproduced)
+None.
+
+## Claims checked
+| Claim | Source | Result | Evidence |
+|---|---|---|---|
+| "parse_duration('90s') returns 9, because the regex only captures a single digit" | Lint bot PR comment | **refuted** | The regex is `(\d+)([dhms])` (durations.py:3), and `\d+` matches one or more digits. Running `python3 -c "from tinyshop.durations import parse_duration as p; print(p('90s'))"` printed `'90s' 90` (exit 0). The parent commit's regex `(\d+)([hms])` also returns `('90', 's')` on `'90s'`. Neither this commit nor the one before it has the bug. |
+| Commit adds days: `'2d'` parses to 172800 | Commit message and docstring | confirmed | `'2d' 172800`, `'10d' 864000`, `'1d2h3m4s' 93784` (=86400+7200+180+4). The test `test_days ... ok` passed. |
+| Docstring: units may repeat and are summed (`'1m1m'` is 120), and anything else raises ValueError | durations.py docstring | confirmed | `'1m1m' 120`. These inputs all raised `ValueError bad duration: ...`: `'d'`, `'2'`, `'2x'`, `'2d '`, `'2D'`, `'-2d'`, `'2dd'`. |
+
+## Not reproduced
+None.
+
+## Not run
+Nothing.
+
+## Commands run
+1. `git rev-parse HEAD; git status --porcelain; git log --oneline -3; git diff HEAD~1 HEAD --stat; git diff HEAD~1 HEAD`: rev-parse exit 0, status exit 0 with empty output (clean tree).
+2. Read `tinyshop/durations.py`, plus `ls; ls tests; cat tests/test_durations.py`: exit 0.
+3. `PYTHONDONTWRITEBYTECODE=1 python3 -c "<parse_duration on valid inputs and invalid inputs>"`: exit 0. Output is quoted in the table above.
+4. `PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -t . -v`: exit 0, `Ran 6 tests in 0.001s` / `OK`. Then `git show HEAD~1:tinyshop/durations.py | head -4` (shows the parent's `(\d+)([hms])`), a regex match on `'90s'` → `('90', 's')`, and `git status --porcelain`: exit 0 with empty output. My runs left no files in the repository.
+
+The lint bot is wrong: `parse_duration('90s')` returns 90, not 9, because the regex captures all the digits. The new day unit works as described, and all 6 project tests pass.
+
+VERDICT: PASS @ 89771d2e319f29156908bdfe2e7043b487f870f4
