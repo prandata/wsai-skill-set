@@ -199,6 +199,16 @@ try:
     rc, out, err, _ = run(["octo-cat"], keys_body(mine) + "ssh-dss !!!!\n")
     check("malformed DSA line is unreadable, not given a fake fingerprint",
           rc == 1 and "COULD NOT READ" in out and "47DEQpj8HBSa" not in out, out + err)
+    raw = base64.b64decode(dsa[1])
+    bad_dsa = {
+        "right prefix, zero bytes": struct.pack(">I", 7) + b"ssh-dss" + bytes(300),
+        "truncated": raw[:-5],
+        "trailing bytes": raw + b"\x00\x01",
+    }
+    for label, blob in bad_dsa.items():
+        rc, out, err, _ = run(["octo-cat"], keys_body(mine) + "ssh-dss " + base64.b64encode(blob).decode() + "\n")
+        check(f"DSA blob with bad structure ({label}) is unreadable", rc == 1 and "COULD NOT READ" in out
+              and "DSA   NOT IN" not in out, out + err)
     dsa_home = os.path.join(tmp, "dsa-home")
     os.makedirs(os.path.join(dsa_home, ".ssh"))
     open(os.path.join(dsa_home, ".ssh", "id_dsa.pub"), "w").write(" ".join(dsa) + " old laptop\n")

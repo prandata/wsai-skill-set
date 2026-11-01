@@ -92,7 +92,7 @@ old_reason() {
 # Uses ssh-keygen. For DSA keys, which OpenSSH 10 no longer parses, it computes the same
 # SHA256 fingerprint (base64 of the SHA-256 of the key blob, no padding) with openssl.
 fingerprint_line() {
-  local line="$1" out bits fp type ktype blob size
+  local line="$1" out bits fp type ktype blob
   if out=$(printf '%s\n' "$line" | ssh-keygen -E sha256 -lf - 2>/dev/null) && [ -n "$out" ]; then
     bits=$(printf '%s\n' "$out" | awk 'NR==1{print $1}')
     fp=$(printf '%s\n' "$out" | awk 'NR==1{print $2}')
@@ -104,15 +104,28 @@ fingerprint_line() {
   blob=$(printf '%s\n' "$line" | awk '{print $2}')
   [ "$ktype" = "ssh-dss" ] || return 1
   command -v openssl >/dev/null 2>&1 || return 1
-  # A real ssh-dss blob is base64 that starts with the encoded name "ssh-dss" (AAAAB3NzaC1kc3M)
-  # and carries four large numbers, so it decodes to hundreds of bytes. Anything else is unreadable.
+  # A real ssh-dss blob (RFC 4253, section 6.6) is the string "ssh-dss" then four numbers p, q, g, y,
+  # each a 4-byte length and that many bytes, filling the blob exactly. Anything else is unreadable.
   case "$blob" in
     *[!A-Za-z0-9+/=]*) return 1 ;;
     AAAAB3NzaC1kc3M*) ;;
     *) return 1 ;;
   esac
-  size=$(printf '%s' "$blob" | openssl base64 -d -A 2>/dev/null | wc -c | tr -d ' ')
-  [ "${size:-0}" -ge 300 ] 2>/dev/null || return 1
+  printf '%s' "$blob" | openssl base64 -d -A 2>/dev/null | od -An -v -tu1 | awk '
+    { for (i = 1; i <= NF; i++) b[n++] = $i }
+    END {
+      pos = 0
+      for (field = 0; field < 5; field++) {
+        if (pos + 4 > n) exit 1
+        len = ((b[pos] * 256 + b[pos+1]) * 256 + b[pos+2]) * 256 + b[pos+3]
+        pos += 4
+        if (len < 1 || pos + len > n) exit 1
+        if (field == 0 && len != 7) exit 1
+        if (field == 1 && len < 64) exit 1   # p: at least 512 bits
+        pos += len
+      }
+      exit (pos == n ? 0 : 1)
+    }' || return 1
   fp=$(printf '%s' "$blob" | openssl base64 -d -A 2>/dev/null | openssl dgst -sha256 -binary 2>/dev/null \
     | openssl base64 -A 2>/dev/null | tr -d '=')
   [ -n "$fp" ] || return 1
