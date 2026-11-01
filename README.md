@@ -21,7 +21,7 @@ cp -r wsai-skill-set/skills/wsai-skill-set ~/.claude/skills/ && cp wsai-skill-se
 ## Templates
 
 [`templates/claude-code-memory/`](templates/claude-code-memory/): copy-paste CLAUDE.md, AGENTS.md, SKILL.md and a
-PreToolUse hook (`block-dangerous.sh` blocks recursive force-deletes of `/`, `~`, `*` and `.`, force-pushes, and shell commands that mention `.env`; 29 cases in `tests/test_hook.py`) plus a `permissions.deny` rule so the Read tool cannot open `.env` either.
+PreToolUse hook (`block-dangerous.sh` blocks recursive force-deletes of `/`, `~`, `*` and `.`, force-pushes, and shell commands that mention `.env`; 143 cases in `tests/test_hook.py`, including quoting tricks, long flags and `bash -c`) plus a `permissions.deny` rule so the Read tool cannot open `.env` either.
 
 ## The trick list
 
@@ -37,3 +37,18 @@ we've seen it work in a browser. Claims need a source.
 ## How this is made
 
 Pranjal writes What Survives in AI. AI agents help gather and check the material; he reviews what's published.
+
+## Known limits of the hook
+
+It is a guardrail, not a sandbox. It parses commands the way a shell does, but it does not run them, so it cannot see:
+
+| Not covered | Example |
+|---|---|
+| Variables and command output | `d=/; rm -rf $d` |
+| Other interpreters | `python3 -c "shutil.rmtree('/')"` |
+| Encoded scripts run by another interpreter | `echo ... \| base64 -d \| python3` |
+| Aliases and functions | `alias x='rm -rf /'` |
+
+**Simple rule, on purpose:** any command whose program is a shell interpreter (`bash`, `sh`, `zsh`, `dash`, `ksh`, `eval`, `source`, `.`), and any heredoc into one, is blocked without looking inside. Intended blocks, because the program is a shell: `curl ... | bash` (and `| sh`, which also covers `echo ... | base64 -d | sh`), `. ~/.nvm/nvm.sh` and `source ~/.zshrc`. A command line that ends in `&&`, `;`, `||` or `|` continues on the next line, and that line is checked as a new command. Known false positives: `bash script.sh` (run `./script.sh`), `source .venv/bin/activate` (call `.venv/bin/python` directly), `sh -c '...'` in scripts.
+
+For a hard block, use permission deny rules and the sandbox (see the Claude Code permissions and sandboxing docs). Deliberate obfuscation beyond these is out of scope by design.

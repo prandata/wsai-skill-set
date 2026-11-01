@@ -1,9 +1,9 @@
 ---
 name: claude-code-memory
-description: Set up the four files that stop Claude Code forgetting a project - CLAUDE.md (under 200 lines), AGENTS.md shared with Codex and Cursor, a project skill, and a PreToolUse hook that blocks dangerous commands. Use when starting a repo with Claude Code, when Claude keeps repeating mistakes, or when the user asks for project memory, AGENTS.md, skills or hooks.
+description: Set up the template files that stop Claude Code forgetting a project - CLAUDE.md (under 200 lines), AGENTS.md shared with Codex and Cursor, a project skill, and a PreToolUse hook that blocks dangerous commands. Use when starting a repo with Claude Code, when Claude keeps repeating mistakes, or when the user asks for project memory, AGENTS.md, skills or hooks.
 ---
 
-# Claude Code memory: four files
+# Claude Code memory: template files
 
 Templates live in `templates/claude-code-memory/` of github.com/prandata/wsai-skill-set. Every claim below is from
 the official docs, checked 31 Oct 2026.
@@ -22,7 +22,13 @@ the official docs, checked 31 Oct 2026.
 
 ## Steps
 
-1. Copy the four template files into the repo root, keeping paths.
+1. Copy the template files into the repo root, keeping paths:
+   - `CLAUDE.md`
+   - `AGENTS.md`
+   - `.claude/settings.json`
+   - `.claude/skills/repo-conventions/SKILL.md`
+   - `.claude/hooks/block-dangerous.sh`
+   - `.claude/hooks/block_dangerous.py` (the hook needs both hook files; with only the `.sh`, every Bash call is blocked)
 2. Fill in the `<...>` placeholders from the repo's real commands (read package.json / Makefile / pyproject first).
 3. `chmod +x .claude/hooks/block-dangerous.sh`, then test it:
    `echo '{"tool_input":{"command":"rm -rf /"}}' | .claude/hooks/block-dangerous.sh; echo $?` should print 2.

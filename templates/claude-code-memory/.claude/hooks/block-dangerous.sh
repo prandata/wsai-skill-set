@@ -2,22 +2,10 @@
 # PreToolUse hook: blocks dangerous shell commands no matter what Claude decides.
 # CLAUDE.md is context, not enforced configuration; a hook is enforced (https://code.claude.com/docs/en/memory).
 # Exit code 2 blocks the tool call and shows stderr to Claude. Any other failure here also blocks.
+# Two files: this script and block_dangerous.py beside it. Copy both into .claude/hooks/.
 # Needs bash and python3. Make it executable: chmod +x .claude/hooks/block-dangerous.sh
-python3 -c '
-import sys, json, re
-try:
-    cmd = json.load(sys.stdin).get("tool_input", {}).get("command", "")
-except Exception:
-    print("hook could not read the command", file=sys.stderr); sys.exit(2)
-rules = [
-    r"\brm\s+(?=(?:[^;&|]*\s)?-[a-zA-Z]*[rR])(?=(?:[^;&|]*\s)?-[a-zA-Z]*f)[^;&|]*\s(/|/\*|~|~/|~/\*|\*|\.|\./)(?=\s|$|[;&|])",
-    r"\bgit\s+push\b[^;&|]*(\s-f\b|\s--force|\s\+\S)",
-    r"\.env\b",
-]
-for r in rules:
-    if re.search(r, cmd):
-        print("Blocked by .claude/hooks/block-dangerous.sh: " + cmd, file=sys.stderr); sys.exit(2)
-'
+# A guardrail, not a sandbox: it parses the command like a shell, but a determined script can still hide a command.
+python3 "$(dirname "$0")/block_dangerous.py"
 s=$?
 [ "$s" -eq 0 ] && exit 0
 exit 2
