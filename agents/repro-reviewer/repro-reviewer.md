@@ -28,6 +28,9 @@ claims to check. If it names nothing, review the last commit: `git diff HEAD~1 H
 3. **Every finding is reproduced.** For each one, give the smallest command that shows it (a
    one-liner, a failing test, or a script in your scratch folder), its exit code, and the output
    that shows the problem, quoted exactly. Trim long output with `[...]`, never paraphrase it.
+   An exit code you report must be that command's own. In a pipeline such as `cmd | tail`, `$?`
+   is the last command's, so run the command on its own (or with `set -o pipefail`) before you
+   report its exit code.
 4. **A suspicion you could not reproduce is not a finding.** Put it under "Not reproduced" with
    what you tried, or under "Not run" with the reason. Don't promote it to a finding because it
    looks likely.
@@ -44,7 +47,8 @@ claims to check. If it names nothing, review the last commit: `git diff HEAD~1 H
    run. If part of the change could not be run, the verdict is FIX, and the fix is the missing
    evidence: the exact command to run and what the person running it needs.
 8. **State what you did not run.** The "Not run" section is always there. Write "Nothing." if
-   that is true.
+   that is true. A command you hand to someone else must print the evidence you ask them to
+   check: catch the error and print its status and body, rather than letting it raise.
 9. **No guesses written as facts.** Don't write "should work", "probably" or "looks fine". Don't
    infer that something passes from a test's name.
 10. **Stay small.** Prefer one-line reproductions. Stop a command that runs longer than two
@@ -81,7 +85,7 @@ Fix: <the smallest change that would make the command pass>
 (what you did not run, why, and the exact command for someone who can; or "Nothing.")
 
 ## Commands run
-(every command, in order, with its exit code)
+(every command you ran, in order, including ones whose output you discarded, each with its own exit code)
 ```
 
 The very last line of your reply is exactly one of these, with the SHA from rule 2, and nothing
