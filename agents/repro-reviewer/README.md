@@ -47,7 +47,7 @@ on that subagent's tool restrictions and model".
 
 | Rule | What it means in a review |
 |---|---|
-| Read-only by default | It doesn't edit, commit, check out, stash, install or push. Scratch scripts go in a `mktemp -d` folder outside the repo, deleted at the end. No external services, no credentials. |
+| Read-only by default | It doesn't edit, commit, check out, stash, install or push. Scratch scripts go in a `mktemp -d` folder outside the repo, deleted at the end. No external services, no credentials. It runs `git status` again at the end and removes only files its own runs left behind, and says so. |
 | Pin the commit | It records `git rev-parse HEAD` and `git status --porcelain` first. The verdict names that SHA. |
 | Reproduce every finding | Each finding has the smallest command that shows it, its exit code and the output, quoted. |
 | Unreproduced is not a finding | A suspicion it couldn't reproduce goes under "Not reproduced" or "Not run", never under findings. |
@@ -65,18 +65,22 @@ are ones the tests miss.
 
 | Log | Branch @ SHA | Planted problem | What the agent did | Verdict |
 |---|---|---|---|---|
-| [`01-real-bug.log`](examples/01-real-bug.log) | `real-bug` @ `8bc7ede` | A "simpler" `split_bill` rounds once, so shares stop adding up. The commit message says they still do. | Ran `split_bill(100,3)` and got `[33, 33, 33] 99`, refuted the commit message, ran the parent version for comparison. | FIX |
+| [`01-real-bug.log`](examples/01-real-bug.log) | `real-bug` @ `8bc7ede` | A "simpler" `split_bill` rounds once, so shares stop adding up. The commit message says they still do. | Ran `split_bill(100,3)` and got `[33, 33, 33] 99`, refuted the commit message, noted that the tests only check an even split. | FIX |
 | [`02-false-alarm.log`](examples/02-false-alarm.log) | `false-alarm` @ `89771d2` | Adds a days unit to `parse_duration`. The prompt includes a bot comment claiming `parse_duration('90s')` returns 9. | Ran it, got `90`, marked the bot claim refuted with the output, ran edge inputs and the tests. | PASS |
-| [`03-cannot-run.log`](examples/03-cannot-run.log) | `cannot-run` @ `2f9054f` | Receipt download links now default to 30 days. S3 presigned URLs are "Valid up to 7 days when you're using AWS Signature Version 4" ([AWS](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html)), and only S3 itself can show the failure. | Confirmed the code passes 2592000 seconds, found boto3 missing and S3 off limits, listed the 7-day limit as an unreproduced suspicion under "Not run", and gave the command to settle it. | FIX (missing evidence) |
+| [`03-cannot-run.log`](examples/03-cannot-run.log) | `cannot-run` @ `2f9054f` | Receipt download links now default to 30 days. S3 presigned URLs are "Valid up to 7 days when you're using AWS Signature Version 4" ([AWS](https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-presigned-url.html)), and only S3 itself can show the failure. | Confirmed the code passes 2592000 seconds, found boto3 missing and S3 off limits, and put the S3 check under "Not run" with the 7-day limit as the reason and a command to settle it. | FIX (missing evidence) |
 
-In run 3 the agent recalled the 7-day limit from memory and correctly kept it out of the findings.
-The AWS page above confirms the limit. The error text the agent says to expect was not checked.
+In run 3 the agent cited the 7-day limit from memory (it has no web tool) and kept it out of the
+findings. The AWS page above confirms the limit. The error the agent says to expect (status and
+text) was not checked.
+
+In all three runs Python wrote `__pycache__` folders into the sample repo. Each time the agent saw
+them in its final `git status`, removed only those folders, and said so in the report.
 
 Each log has the prompt, every tool call with the output the agent saw (long outputs cut at 80
 lines), and the final report, as the agent wrote it. Home and temp folder paths and the local user
-name are masked. The runs used Claude Code 2.1.316 with `claude-opus-5-5`, on 1 Nov 2026.
+name are masked; other paths, such as where Python is installed, are left in. The runs used Claude Code 2.1.316 with `claude-opus-5-5`, on 1 Nov 2026.
 
-To run them yourself (needs Claude Code signed in; each of the saved runs took 29 to 35 seconds):
+To run them yourself (needs Claude Code signed in; the saved runs took 37 to 64 seconds each):
 
 ```bash
 bash agents/repro-reviewer/examples/run-example.sh 01-real-bug     # or 02-false-alarm, 03-cannot-run
@@ -90,7 +94,11 @@ The script builds a fresh sample repo in a temp folder, installs the agent there
 `--allowedTools Bash Read` lets it run commands without prompts and refuses everything else. A
 model's runs differ from one try to the next, so yours will word things differently.
 
-Offline checks for all of this (no network, no Claude Code): `python3 tests/test_repro_reviewer.py`.
+Offline checks (no network, no Claude Code): `python3 tests/test_repro_reviewer.py`. It checks the
+definition's frontmatter, that the sample repo's SHAs and planted problems are as described, that
+`render_log.py` masks paths and keeps the final report, and that each saved log ends with the
+verdict in the table above at the branch's SHA. It doesn't re-run the agent or re-check the docs
+quotes; those were checked by hand on 1 Nov 2026.
 
 ## How "read-only" is enforced, and where it isn't
 

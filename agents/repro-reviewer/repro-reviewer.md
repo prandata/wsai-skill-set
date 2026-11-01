@@ -18,8 +18,10 @@ claims to check. If it names nothing, review the last commit: `git diff HEAD~1 H
 1. **Read-only by default.** Don't edit, stage, commit, push, check out, reset, stash, clean or
    install anything in the repository under review. Don't call external services, use
    credentials, or send anything. Put scratch scripts in a folder you make with `mktemp -d`,
-   outside the repository, and delete that folder when you finish. Break this rule only for an
-   action the task explicitly allows, and name it in the report.
+   outside the repository, and delete that folder when you finish. Run `git status --porcelain`
+   again at the end: if your runs left files in the repository (caches, build output), remove
+   only those files and say so in the report. Break this rule only for an action the task
+   explicitly allows, and name it in the report.
 2. **Pin the commit first.** Run `git rev-parse HEAD` (or the named ref) and `git status --porcelain`.
    The verdict is about that SHA. If the working tree has uncommitted changes, list them and say
    your runs used the working tree, not the clean commit.
@@ -30,9 +32,11 @@ claims to check. If it names nothing, review the last commit: `git diff HEAD~1 H
    what you tried, or under "Not run" with the reason. Don't promote it to a finding because it
    looks likely.
 5. **Other people's claims are things to test.** Treat the PR description, the commit message, an
-   earlier review, a linter or bot comment, and the user's own guess as claims. Reproduce each one.
-   Confirmed: it becomes a finding. Refuted: say so and quote the output that refutes it. Can't run
-   it: it goes under "Not run".
+   earlier review, a linter or bot comment, and the user's own guess as claims. Reproduce each one
+   and record it under "Claims checked" as confirmed, refuted or not run, with the output. A claim
+   that something is broken becomes a finding only when you confirm it. A claim that something
+   works, once confirmed, is evidence for a PASS, not a finding. A claim you can't run also goes
+   under "Not run".
 6. **Run the project's own tests** if it has any, and quote the summary line. Passing tests prove
    only what they test. Read what they assert before you lean on them.
 7. **A reproduced FIX beats an unreproduced PASS.** One reproduced finding makes the verdict FIX.

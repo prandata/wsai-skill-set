@@ -1,16 +1,16 @@
 # repro-reviewer example: 03-cannot-run
 
 Sample repo: make-sample-repo.sh, branch cannot-run @ 2f9054ff88f4356a8104284af72eea582cdf8316
-Run: 2026-11-01T12:36:25Z, 2.1.316 (Claude Code), model claude-opus-5-5, exit 0, 4 turns, 35 s
+Run: 2026-11-01T12:48:09Z, 2.1.316 (Claude Code), model claude-opus-5-5, exit 0, 5 turns, 37 s
 Command: run-example.sh (claude -p --agent repro-reviewer, isolated from user settings)
 
 ## Prompt
 
     Review the last commit on this branch.
 
-## Tool calls (3, in order)
+## Tool calls (4, in order)
 
-[1] Bash: git rev-parse HEAD && git status --porcelain && git log -3 --format='%H %s%n%b' && git diff HEAD~1 HEAD --stat && git diff HEAD~1 HEAD && ls -la
+[1] Bash: git rev-parse HEAD && git status --porcelain && git log -3 --format='%H %s%n%b' && git diff HEAD~1 HEAD --stat && git diff HEAD~1 HEAD && ls
 --- output:
     2f9054ff88f4356a8104284af72eea582cdf8316
     2f9054ff88f4356a8104284af72eea582cdf8316 links: receipt links last 30 days
@@ -44,16 +44,11 @@ Command: run-example.sh (claude -p --agent repro-reviewer, isolated from user se
          """Presigned GET URL for a receipt PDF, made with a boto3 S3 client."""
          return s3.generate_presigned_url(
              "get_object",
-    total 8
-    drwxr-xr-x@  7 user  staff  224 Nov  1 23:36 .
-    drwx------@  5 user  staff  160 Nov  1 23:36 ..
-    drwxr-xr-x@  3 user  staff   96 Nov  1 23:36 .claude
-    drwxr-xr-x@ 12 user  staff  384 Nov  1 23:36 .git
-    -rw-r--r--@  1 user  staff   99 Nov  1 23:36 README.md
-    drwxr-xr-x@  6 user  staff  192 Nov  1 23:36 tests
-    drwxr-xr-x@  6 user  staff  192 Nov  1 23:36 tinyshop
+    README.md
+    tests
+    tinyshop
 
-[2] Bash: cat tinyshop/links.py tests/test_links.py README.md; ls tests tinyshop .claude; python3 -m unittest discover -s tests 2>&1 | tail -5; echo exit=$?; python3 -c "import boto3,botocore;print(boto3.__version__,botocore.__version__)"; echo exit=$?; python3 -c "import moto;print(moto.__version__)"; echo exit=$?
+[2] Bash: cat tinyshop/links.py tests/test_links.py README.md; python3 -m unittest -v 2>&1 | tail -15; echo "exit $?"; python3 -c "import boto3, botocore; print(boto3.__version__, botocore.__version__)"; echo "exit $?"
 --- output:
     def download_link(s3, bucket, key, days=30):
         """Presigned GET URL for a receipt PDF, made with a boto3 S3 client."""
@@ -84,60 +79,39 @@ Command: run-example.sh (claude -p --agent repro-reviewer, isolated from user se
     # tinyshop
 
     Sample repo for the repro-reviewer examples. Run the tests with `python3 -m unittest`.
-    .claude:
-    agents
-
-    tests:
-    __init__.py
-    test_durations.py
-    test_links.py
-    test_pricing.py
-
-    tinyshop:
-    __init__.py
-    durations.py
-    links.py
-    pricing.py
-    .....
-    ----------------------------------------------------------------------
-    Ran 5 tests in 0.000s
-
-    OK
-    exit=0
-    Traceback (most recent call last):
-      File "<string>", line 1, in <module>
-        import boto3,botocore;print(boto3.__version__,botocore.__version__)
-        ^^^^^^^^^^^^^^^^^^^^^
-    ModuleNotFoundError: No module named 'boto3'
-    exit=1
-    Traceback (most recent call last):
-      File "<string>", line 1, in <module>
-        import moto;print(moto.__version__)
-        ^^^^^^^^^^^
-    ModuleNotFoundError: No module named 'moto'
-    exit=1
-
-[3] Bash: python3 -m unittest -v tests.test_links; echo exit=$?; python3 -m unittest discover -s . -t . >/dev/null 2>&1; echo full_exit=$?; python3 -c "
-    from tinyshop.links import download_link
-    class S:
-        def generate_presigned_url(self,op,Params,ExpiresIn): return ExpiresIn
-    print(download_link(S(),'receipts','r1.pdf'))"; echo exit=$?
---- output:
+    test_bad (tests.test_durations.ParseDuration.test_bad) ... ok
+    test_mixed (tests.test_durations.ParseDuration.test_mixed) ... ok
     test_default_expiry (tests.test_links.DownloadLink.test_default_expiry) ... ok
+    test_even (tests.test_pricing.SplitBill.test_even) ... ok
+    test_no_people (tests.test_pricing.SplitBill.test_no_people) ... ok
 
     ----------------------------------------------------------------------
-    Ran 1 test in 0.000s
+    Ran 5 tests in 0.001s
 
     OK
-    exit=0
-    full_exit=0
-    2592000
-    exit=0
+    exit 0
+    Traceback (most recent call last):
+      File "<string>", line 1, in <module>
+        import boto3, botocore; print(boto3.__version__, botocore.__version__)
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ModuleNotFoundError: No module named 'boto3'
+    exit 1
+
+[3] Bash: git status --porcelain --ignored; python3 -c "from tinyshop.links import download_link; print(30*86400, 7*86400)"
+--- output:
+    ?? tests/__pycache__/
+    ?? tinyshop/__pycache__/
+    !! .claude/
+    2592000 604800
+
+[4] Bash: rm -rf tests/__pycache__ tinyshop/__pycache__ && git status --porcelain; echo "exit $?"
+--- output:
+    exit 0
 
 ## Final report
 
 ## Reviewed
-`HEAD` @ 2f9054ff88f4356a8104284af72eea582cdf8316 ("links: receipt links last 30 days"). The diff came from `git diff HEAD~1 HEAD`. Two files changed: `tinyshop/links.py`, where the `days` default goes from 1 to 30, and `tests/test_links.py`, where the expected value goes from `86400` to `30 * 86400`. `git status --porcelain` printed nothing, so the tree was clean.
+HEAD @ 2f9054ff88f4356a8104284af72eea582cdf8316, commit "links: receipt links last 30 days". It changes 2 files: `tinyshop/links.py` (the default goes from `days=1` to `days=30`) and `tests/test_links.py` (the expected value goes from `86400` to `30 * 86400`). I got the diff with `git diff HEAD~1 HEAD`. The working tree was clean before my runs.
 
 ## Findings (reproduced)
 None.
@@ -145,33 +119,26 @@ None.
 ## Claims checked
 | Claim | Source | Result | Evidence |
 |---|---|---|---|
-| The default expiry is now 30 days | Commit subject | confirmed (only the number passed in) | A stub client prints `2592000`, which is 30×86400, exit 0 |
-| Customers get "links that work for a month" | Commit body | **not run** | Proving this needs a real S3 presigner and a request to S3. boto3 isn't installed (`ModuleNotFoundError: No module named 'boto3'`), and rule 1 forbids calling S3 |
-| Tests pass | Implied | confirmed | `python3 -m unittest discover -s . -t .` exit 0; `Ran 5 tests [...] OK` |
-
-The test only shows that `ExpiresIn == 2592000` is handed to `FakeS3`. `FakeS3` returns a fixed string and has no expiry rules, so the test can't tell whether the resulting URL works for 30 days.
+| The default expiry for receipt links is now 30 days | commit diff | confirmed | `python3 -m unittest -v` → `test_default_expiry ... ok`, `Ran 5 tests in 0.001s`, `OK` (exit 0). The test only checks that `ExpiresIn == 2592000` is passed to a `FakeS3`. |
+| "links that work for a month" (the URLs S3 returns still work for 30 days) | commit message | not run | No real S3 was used and boto3 isn't installed (`ModuleNotFoundError: No module named 'boto3'`, exit 1). See Not run. |
 
 ## Not reproduced
 None.
 
 ## Not run
-- **Whether a 30-day presigned URL works on real S3.** This is a suspicion, not a finding. It comes from my memory of AWS documentation, which I could not test here: S3 SigV4 presigned URLs are said to have a maximum `X-Amz-Expires` of 604800 seconds (7 days), and S3 refuses longer ones when the link is used, not when it is made. If that's right, every receipt link would fail from now on. I couldn't run it because boto3 and moto aren't installed, I may not install packages, and I may not call AWS. To check it, someone with boto3 and AWS credentials for a test bucket can run:
+- **Whether a URL signed for 2592000 seconds works with real S3.** The only test uses `FakeS3`, which records `ExpiresIn` and returns a fixed string. It never checks that S3 accepts the URL. This matters because S3 presigned URLs signed with SigV4 have a documented maximum lifetime of 604800 seconds (7 days). The commit asks for 2592000 seconds (30 days, computed: `2592000 604800`). If that limit applies, every new default link would be rejected when used, so the change would break receipt links instead of making them last longer. I could not run this: the rules forbid installing boto3, using credentials or calling AWS. Someone with boto3 and test-bucket credentials can run:
   ```
-  python3 -c "import boto3,urllib.request as u; url=boto3.client('s3',region_name='<region>').generate_presigned_url('get_object',Params={'Bucket':'<test-bucket>','Key':'<existing-key>'},ExpiresIn=30*86400); print(url); print(u.urlopen(url).status)"
+  python3 -c "import boto3,urllib.request as u; s=boto3.client('s3'); url=s.generate_presigned_url('get_object',Params={'Bucket':'<test-bucket>','Key':'<existing-key>'},ExpiresIn=30*86400); print(u.urlopen(url).status)"
   ```
-  A pass is HTTP 200. A fail is HTTP 400 with `AuthorizationQueryParametersError` (expected text: "X-Amz-Expires must be less than a week"). Run it once with `ExpiresIn=604800` as a control.
+  If it returns HTTP 403 with `AuthorizationQueryParametersError` ("X-Amz-Expires must be less than a week"), the change is broken. If so, cap expiry at 7 days, or make links that last a month a different way (for example, generate a fresh URL each time a user asks for one).
 
 ## Commands run
-1. `git rev-parse HEAD && git status --porcelain && git log -3 ... && git diff HEAD~1 HEAD --stat && git diff HEAD~1 HEAD && ls -la` exit 0
-2. `cat tinyshop/links.py tests/test_links.py README.md; ls ...; python3 -m unittest discover -s tests | tail -5` exit 0 (`Ran 5 tests`, `OK`)
-3. `python3 -c "import boto3,botocore"` exit 1 (`ModuleNotFoundError: No module named 'boto3'`)
-4. `python3 -c "import moto"` exit 1 (`ModuleNotFoundError: No module named 'moto'`)
-5. `python3 -m unittest -v tests.test_links` exit 0 (`test_default_expiry ... ok`)
-6. `python3 -m unittest discover -s . -t .` exit 0
-7. `python3 -c "<stub client prints ExpiresIn from download_link>"` exit 0, printed `2592000`
+1. `git rev-parse HEAD && git status --porcelain && git log -3 ... && git diff HEAD~1 HEAD --stat && git diff HEAD~1 HEAD && ls`: exit 0
+2. `cat tinyshop/links.py tests/test_links.py README.md; python3 -m unittest -v | tail -15`: exit 0 (5 tests, OK)
+3. `python3 -c "import boto3, botocore; ..."`: exit 1 (boto3 isn't installed)
+4. `git status --porcelain --ignored; python3 -c "... print(30*86400, 7*86400)"`: exit 0. The test run had left `tests/__pycache__/` and `tinyshop/__pycache__/`. `.claude/` is ignored, was already there, and I didn't touch it.
+5. `rm -rf tests/__pycache__ tinyshop/__pycache__ && git status --porcelain`: exit 0. This removed only the caches my runs created, and the tree is clean again.
 
-I made no scratch folder, so there was nothing to delete.
-
-To sum up: all the tests pass. But the change exists so that customers get links that work for a month, and nothing I could run here checks that. Because I couldn't run it, the verdict is FIX. The fix is to run the command under "Not run".
+The commit message says the links will work for a month, but I couldn't run that against real S3. The verdict is FIX until someone runs the S3 check above.
 
 VERDICT: FIX @ 2f9054ff88f4356a8104284af72eea582cdf8316

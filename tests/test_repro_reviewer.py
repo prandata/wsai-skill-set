@@ -3,7 +3,8 @@
 1. The subagent file has the frontmatter Claude Code needs and no write tools.
 2. make-sample-repo.sh builds the same commit SHAs every time.
 3. Each planted problem is what the README says it is, and the sample repo's own tests miss all three.
-4. Each saved example log ends with the verdict the README states, at the branch's SHA.
+4. render_log.py masks home, user and temp paths and keeps the final report.
+5. Each saved example log ends with the verdict the README states, at the branch's SHA.
 
 No network, no Claude Code. Run: python3 tests/test_repro_reviewer.py
 """
@@ -90,7 +91,34 @@ try:
 finally:
     shutil.rmtree(tmp)
 
-# 4. saved logs
+# 4. render_log.py on a made-up stream: masks paths, keeps every call and the final report
+tmp = tempfile.mkdtemp(prefix="repro-reviewer-render-")
+try:
+    import json
+    home, run = "/Users/someone", "/var/folders/ab/cd123/T/tmp.XYZ"
+    events = [
+        {"type": "system", "subtype": "init", "model": "test-model"},
+        {"type": "assistant", "message": {"content": [{"type": "tool_use", "id": "t1", "name": "Bash",
+            "input": {"command": f"ls {run}/tinyshop && cat {home}/.zshrc"}}]}},
+        {"type": "user", "message": {"content": [{"type": "tool_result", "tool_use_id": "t1",
+            "content": f"/private{run}/tinyshop\n/private/var/folders/ab/cd123/T/tmp.other/x.py\nsomeone staff"}]}},
+        {"type": "result", "result": "## Reviewed\nok\nVERDICT: PASS @ abc", "num_turns": 2, "duration_ms": 1500},
+    ]
+    stream = os.path.join(tmp, "s.jsonl")
+    open(stream, "w").write("\n".join(json.dumps(e) for e in events) + "\n")
+    r = subprocess.run([sys.executable, os.path.join(examples, "render_log.py"), stream, "--name", "t",
+                        "--mask", f"{run}/tinyshop=/tmp/tinyshop", "--mask", f"{run}=/tmp/run",
+                        "--mask", f"{home}=~", "--mask", "someone=user"], capture_output=True, text=True)
+    out = r.stdout
+    check("render: exit 0", r.returncode == 0, r.stderr[-300:])
+    check("render: no home, user or temp path left", not re.search(r"/Users/|someone|/var/folders/", out), out)
+    check("render: /private/var form masked too", "/tmp/tinyshop\n" in out and "$TMPDIR/tmp.other/x.py" in out, out)
+    check("render: command shown masked", "[1] Bash: ls /tmp/tinyshop && cat ~/.zshrc" in out, out)
+    check("render: ends with the final report", out.rstrip().endswith("VERDICT: PASS @ abc"), out[-200:])
+finally:
+    shutil.rmtree(tmp)
+
+# 5. saved logs
 for name, (branch, verdict) in LOGS.items():
     log = open(os.path.join(examples, name + ".log")).read()
     lines = [l for l in log.strip().split("\n") if l.strip()]

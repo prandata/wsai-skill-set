@@ -2,8 +2,9 @@
 """Turn a `claude -p --output-format stream-json --verbose` run into a readable log.
 
 Every tool call is printed in order with its input and the output the agent saw, then the agent's
-final report. Paths given with --mask are replaced, and so is the per-user temp folder, so a log
-carries no machine-specific paths. Long tool outputs are cut at 80 lines, marked with [...].
+final report. Each --mask FROM=TO is replaced (run-example.sh masks the run folder, the home
+folder and the user name), and so is the macOS per-user temp folder. Other paths, such as where
+Python is installed, are left as they are. Long tool outputs are cut at 80 lines, marked [...].
 """
 import argparse, json, re, sys
 
