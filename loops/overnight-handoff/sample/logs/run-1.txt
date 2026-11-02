@@ -1,0 +1,51 @@
+# run 1: interrupted with 'touch todo-repo/STOP' once HANDOFF.md shows Run: 1
+[23:30:25] resume check OK: status=in-progress run=0 next=['Start with step 1 in the task file.']
+[23:30:25] session 1: starting (limits: 8 min, $0.50, 40 turns)
+[23:30:46] (demo) first checkpoint seen; touch todo-repo/STOP
+[23:30:47] session 1: STOP file; sending SIGINT and waiting up to 30s
+[23:30:47] session 1: ended 'STOP file' (result: error_during_execution) exit=0 turns=7 cost=$0.0262 handoff_changed=True
+[23:30:47] handoff now: status=in-progress run=1 next=['Step 2: remove duplicates']
+[23:30:47] STOPPED: STOP file. The next run resumes from HANDOFF.md.
+
+---- HANDOFF.md after this run ----
+# Handoff
+
+Task: Tidy the TODO list
+Status: in-progress
+Run: 1
+Updated: 2026-11-02T12:30:25Z
+
+## State
+
+Step 1 finished: every line in TODO.md is now `- [ ]` or `- [x]`.
+Duplicates remain, and there are no Open/Done headings yet.
+
+## Done
+
+- Step 1: one format
+
+## Next
+
+- Step 2: remove duplicates
+- Step 3: Open/Done headings
+- Step 4: priority order under Open
+
+## Open questions
+
+- (none)
+
+---- TODO.md after this run ----
+# TODO
+
+- [ ] write the release notes (p2)
+- [ ] fix the login timeout (p1)
+- [x] rename the config file
+- [ ] add a dark mode toggle
+- [x] update the README
+- [ ] Fix the login timeout (p1).
+- [ ] back up the database (p1)
+- [ ] write the release notes (p2)
+- [ ] answer the open issues
+
+---- .overnight/runs.jsonl ----
+{"run": 1, "started": "2026-11-02T12:30:25Z", "ended": "2026-11-02T12:30:47Z", "seconds": 23, "outcome": "STOP file", "subtype": "error_during_execution", "exit": 0, "num_turns": 7, "cost_usd": 0.026188, "handoff_changed": true}

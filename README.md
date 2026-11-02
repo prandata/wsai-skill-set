@@ -25,6 +25,13 @@ cp -r wsai-skill-set/skills/wsai-skill-set ~/.claude/skills/ && cp wsai-skill-se
 [`templates/claude-code-memory/`](templates/claude-code-memory/): copy-paste CLAUDE.md, AGENTS.md, SKILL.md and a
 PreToolUse hook (`block-dangerous.sh` blocks recursive force-deletes of `/`, `~`, `*` and `.`, force-pushes, and shell commands that mention `.env`; 143 cases in `tests/test_hook.py`, including quoting tricks, long flags and `bash -c`) plus a `permissions.deny` rule so the Read tool cannot open `.env` either.
 
+## Loops
+
+[`loops/overnight-handoff/`](loops/overnight-handoff/): run Claude Code on one bounded task overnight. Each `claude -p`
+session stops cleanly at a time or spend limit and leaves a `HANDOFF.md` (state, done, next, open questions); the next
+session resumes from it, and a resume check refuses to start if the handoff is malformed. No shell for the agent, no
+git pushes, a dry run first. The sample was run twice, the first run interrupted; both logs are in the folder.
+
 ## The trick list
 
 [`tricks.yaml`](tricks.yaml): every trick with how to use it, what you get, status and the date it was last checked.
