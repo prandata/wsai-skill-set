@@ -179,16 +179,24 @@ if [ -d "$SSH_DIR" ]; then
     pub_files=$((pub_files + 1))
     name=$(basename "$f")
     got_one=0
+    bad_lines=0
+    lineno=0
     while IFS= read -r kline || [ -n "$kline" ]; do
+      lineno=$((lineno + 1))
       kline=$(printf '%s' "$kline" | tr -d '\r')
       case "$kline" in ""|"#"*) continue ;; esac
       if row=$(fingerprint_line "$kline"); then
         local_rows="${local_rows}${row}${TAB}${name}${NL}"
         local_count=$((local_count + 1))
         got_one=1
+      else
+        # A line that is not a readable key is a finding even when the same file has a good key.
+        echo "$PROG: warning: could not read a public key from $f (line $lineno); skipped" >&2
+        bad_lines=$((bad_lines + 1))
+        local_warn=$((local_warn + 1))
       fi
     done < "$f"
-    if [ "$got_one" -eq 0 ]; then
+    if [ "$got_one" -eq 0 ] && [ "$bad_lines" -eq 0 ]; then
       echo "$PROG: warning: could not read a public key from $f; skipped" >&2
       local_warn=$((local_warn + 1))
     fi

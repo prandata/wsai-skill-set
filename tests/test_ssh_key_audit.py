@@ -53,7 +53,7 @@ def snapshot(root):
     return out
 
 
-def run(args, body="", code="200", mode="ok", home=None):
+def run(args, body="", code="200", mode="ok", home=None, cwd=None):
     home = home or os.path.join(tmp, "home")
     body_file = os.path.join(tmp, "body")
     open(body_file, "w").write(body)
@@ -65,7 +65,7 @@ def run(args, body="", code="200", mode="ok", home=None):
         "STUB_BODY": body_file, "STUB_CODE": code, "STUB_MODE": mode, "STUB_LOG": log,
         "SSH_AUTH_SOCK": "/nonexistent/agent.sock",
     }
-    p = subprocess.run(["/bin/bash", script, *args], capture_output=True, text=True, env=env)
+    p = subprocess.run(["/bin/bash", script, *args], capture_output=True, text=True, env=env, cwd=cwd)
     return p.returncode, p.stdout, p.stderr, open(log).read()
 
 
@@ -218,6 +218,67 @@ try:
           and f"{fingerprint(dsa[1])}  id_dsa.pub   OLD: DSA" in out, out + err)
     rc, out, err, _ = run(["octo-cat"], keys_body(mine) + "ssh-ed25519 AAAAnotbase64!!\n")
     check("unreadable GitHub key counted as a finding", rc == 1 and "COULD NOT READ" in out, out + err)
+
+    # 8. Non-key responses fail loudly (exit 4, nothing on stdout), even with HTTP 200.
+    portal_bodies = {
+        "JSON error body": '{"message":"Not Found","status":"404"}\n',
+        "HTML page with no final newline": "<html><body>Accept the terms to use this Wi-Fi</body></html>",
+        "real key followed by an HTML line": keys_body(mine) + "</body></html>\n",
+        "HTML line first, real key after": "<!DOCTYPE html>\n" + keys_body(mine),
+        "indented key line": "  " + keys_body(mine),
+    }
+    for label, body in portal_bodies.items():
+        rc, out, err, _ = run(["octo-cat"], body)
+        check(f"HTTP 200 with {label} exits 4 and prints no report",
+              rc == 4 and out == "" and "did not return an SSH key list" in err and "did not run" in err,
+              f"rc={rc} out={out!r} err={err!r}")
+
+    # 9. Keys ssh-keygen cannot read are findings, never a silent exit 0.
+    rc, out, err, _ = run(["octo-cat"], keys_body(mine) + "ssh-rsa AAAAB3NzaC1yc2EAAAAnotakey\n")
+    check("unreadable GitHub RSA line exits 1 and says COULD NOT READ",
+          rc == 1 and "COULD NOT READ" in out and "1 unreadable" in out, out + err)
+    # An unreadable line in a .pub file that also holds a good key used to be skipped without a word.
+    mixed_home = os.path.join(tmp, "mixed-home")
+    os.makedirs(os.path.join(mixed_home, ".ssh"))
+    open(os.path.join(mixed_home, ".ssh", "id_mixed.pub"), "w").write(
+        " ".join(mine) + " ok\nssh-ed25519 AAAAnotbase64!!\n")
+    rc, out, err, _ = run(["octo-cat"], keys_body(mine), home=mixed_home)
+    check("good key plus unreadable line in one .pub file exits 1, with a warning naming file and line",
+          rc == 1 and "id_mixed.pub (line 2)" in err and "1 unreadable" in out, out + err)
+    check("the good key in that file still matches", f"{fingerprint(mine[1])}  ED25519 256   local: id_mixed.pub" in out, out)
+    open(os.path.join(mixed_home, ".ssh", "id_mixed.pub"), "w").write(
+        "# a comment\n\n" + " ".join(mine) + " ok\n")
+    rc, out, err, _ = run(["octo-cat"], keys_body(mine), home=mixed_home)
+    check("comments and blank lines in a .pub file are not findings", rc == 0 and err == "", out + err)
+    open(os.path.join(mixed_home, ".ssh", "id_mixed.pub"), "w").write("")
+    rc, out, err, _ = run(["octo-cat"], keys_body(mine), home=mixed_home)
+    check("an empty .pub file is one warning and one finding",
+          rc == 1 and err.count("could not read a public key") == 1 and "1 unreadable" in out, out + err)
+
+    # 10. SKILL.md runs the script through ${CLAUDE_SKILL_DIR}, so it works from any folder.
+    skill_md = open(os.path.join(here, "..", "skills", "ssh-key-audit", "SKILL.md")).read()
+    fence = skill_md.split("```bash\n", 1)[1].split("```", 1)[0]
+    cmds = [l for l in fence.splitlines() if "audit.sh" in l]
+    check("SKILL.md bash block runs audit.sh via ${CLAUDE_SKILL_DIR}",
+          len(cmds) == 2 and all('bash "${CLAUDE_SKILL_DIR}/scripts/audit.sh"' in l for l in cmds), fence)
+    check("SKILL.md has no bare relative scripts/audit.sh command",
+          not any(l.lstrip().startswith(("bash scripts/", "./scripts/", "bash ./scripts/")) for l in skill_md.splitlines()))
+    skill_dir = os.path.dirname(os.path.dirname(script))
+    expanded = cmds[0].split('bash "', 1)[1].split('"', 1)[0].replace("${CLAUDE_SKILL_DIR}", skill_dir)
+    elsewhere = os.path.join(tmp, "elsewhere")
+    os.makedirs(elsewhere)
+    env2 = {"PATH": os.path.join(tmp, "bin") + ":/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin:/usr/local/bin",
+            "HOME": home, "LANG": "en_US.UTF-8", "STUB_BODY": os.path.join(tmp, "body"), "STUB_CODE": "200",
+            "STUB_MODE": "ok", "STUB_LOG": os.path.join(tmp, "curl.log")}
+    open(env2["STUB_BODY"], "w").write(keys_body(mine))
+    p2 = subprocess.run(["/bin/bash", expanded, "octo-cat"], capture_output=True, text=True, env=env2, cwd=elsewhere)
+    check("the expanded SKILL.md command runs from a different working folder",
+          p2.returncode == 0 and "local: id_mine.pub" in p2.stdout, p2.stdout + p2.stderr)
+    spaced = os.path.join(tmp, "dir with space", "ssh-key-audit")
+    shutil.copytree(skill_dir, spaced)
+    p3 = subprocess.run(["/bin/bash", os.path.join(spaced, "scripts", "audit.sh"), "octo-cat"],
+                        capture_output=True, text=True, env=env2, cwd=elsewhere)
+    check("a skill folder with a space in its path still runs", p3.returncode == 0, p3.stdout + p3.stderr)
 finally:
     shutil.rmtree(tmp, ignore_errors=True)
 
