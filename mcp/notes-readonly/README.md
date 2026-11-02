@@ -43,7 +43,7 @@ Options:
 
 | Want | Do |
 |---|---|
-| A bigger or smaller per-file cap (default 1,000,000 bytes) | add `--env NOTES_MAX_BYTES=2000000` before `notes` in step 2 |
+| A bigger or smaller per-file cap (default 1,000,000 bytes) | `claude mcp add --scope user --env NOTES_MAX_BYTES=2000000 --transport stdio notes -- uv run --script "$PWD/server.py" ~/notes` (`--env` must not come directly before the name `notes`, or Claude Code reads `notes` as another variable and rejects the command) |
 | Only this project | `--scope local` (the default) instead of `--scope user` |
 | Share it with a repo's team | `--scope project` writes `.mcp.json`; each person approves it on first run |
 | Remove it | `claude mcp remove notes --scope user` |
