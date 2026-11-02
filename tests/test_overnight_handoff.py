@@ -95,6 +95,9 @@ ok("blocked without a question", any("blocked" in p for p in problems(GOOD.repla
 ok("blocked with a question is fine", problems(GOOD.replace("Status: in-progress", "Status: blocked").replace("- (none)\n", "- Which file?\n")) == [])
 ok("too long", any("lines" in p for p in problems(GOOD.replace("Not started.", "x\n" * 200))))
 ok("time with offset is fine", problems(GOOD.replace("22:00:00Z", "22:00:00+11:00")) == [])
+readme = open(os.path.join(loop, "README.md"), encoding="utf-8").read()
+example = readme.split("## The handoff format", 1)[1].split("```markdown\n", 1)[1].split("```", 1)[0]
+ok("README's handoff example passes the resume check", problems(example) == [], problems(example))
 r = subprocess.run([sys.executable, os.path.join(loop, "check_handoff.py"), os.path.join(tmp, "nope.md")], capture_output=True, text=True)
 ok("CLI: missing file exits 1", r.returncode == 1 and "MALFORMED" in r.stdout, r.stdout)
 
@@ -198,6 +201,14 @@ r, calls = runner(d, "hang", "--session-minutes", "0.05", "--max-sessions", "1",
 rec = [json.loads(l) for l in open(os.path.join(d, ".overnight", "runs.jsonl"))]
 ok("a session that ignores SIGINT is stopped with SIGTERM", rec[-1]["exit"] == -15 and time.monotonic() - t < 30, rec)
 ok("a killed session with no result records its cost as unknown", rec[-1]["cost_usd"] is None and rec[-1]["subtype"] is None, rec)
+
+d = workdir()
+os.makedirs(os.path.join(d, ".overnight"))
+open(os.path.join(d, ".overnight", "runs.jsonl"), "w").write('{"run": 1, "outcome": "succ\n')
+r, calls = runner(d, "step", "--max-sessions", "1")
+ok("truncated last line in runs.jsonl: no traceback, previous session is 'unknown'",
+   r.returncode == 0 and "Traceback" not in r.stderr and calls and any("Previous session: unknown" in x for x in calls[-1]),
+   r.stdout + r.stderr)
 
 shutil.rmtree(tmp)
 print(f"\n{'all passed' if not fails else str(fails) + ' failed'}")

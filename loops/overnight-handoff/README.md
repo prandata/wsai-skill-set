@@ -17,7 +17,7 @@ saved progress, clear permissions and a safe way to resume, not a longer prompt.
 | [`demo.sh`](demo.sh) | Runs the sample twice: run 1 interrupted, run 2 resumes. Logs in [`sample/logs/`](sample/logs/). |
 
 Needs Python 3.9 or later (standard library only) and Claude Code v2.1.259 or later, signed in.
-Offline tests: `python3 tests/test_overnight_handoff.py` from the repo root (45 cases, a fake
+Offline tests: `python3 tests/test_overnight_handoff.py` from the repo root (47 cases, a fake
 `claude`, no spend).
 
 ## 5-minute setup
@@ -39,7 +39,9 @@ python3 run.py ~/overnight/todo-repo --model sonnet --max-sessions 1 --budget-us
 # 4. Stop it any time from another terminal. The session ends its turn and the loop exits.
 touch ~/overnight/todo-repo/STOP
 
-# 5. Overnight: start it before bed with a wall-clock limit, read HANDOFF.md in the morning.
+# 5. Overnight: remove the STOP file from step 4 (while it exists the loop exits at once),
+#    start it before bed with a wall-clock limit, read HANDOFF.md in the morning.
+rm -f ~/overnight/todo-repo/STOP
 python3 run.py ~/overnight/todo-repo --hours 7 --total-budget-usd 5 >> ~/overnight/loop.log 2>&1
 ```
 
@@ -63,8 +65,8 @@ Exit codes: 0 done or stopped at a limit, 2 refused (missing or malformed handof
 # Handoff
 
 Task: Tidy the TODO list
-Status: in-progress          # in-progress | done | blocked
-Run: 1                       # the session that last wrote it
+Status: in-progress
+Run: 1
 Updated: 2026-11-02T12:30:25Z
 
 ## State
@@ -79,6 +81,10 @@ Two to five lines on where things stand. Replaced each time, never appended.
 ## Open questions
 - (none)
 ```
+
+Status is one of `in-progress`, `done` or `blocked`. Run is the number of the session that last
+wrote the file (`0` before the first session). Write nothing else on a header line: a trailing
+comment makes the value invalid.
 
 The resume check refuses the file if: the title or a header field is missing or repeated; Status is
 not one of the three values; Run is not a whole number; Updated is not an ISO 8601 time; the four
@@ -119,7 +125,7 @@ run on an API key, add `--bare` in `build_cmd()` in `run.py`.
 | Starts from | the template (`Run: 0`) | run 1's handoff (`Run: 1`, Next: step 2) |
 | What happened | Step 1 done and checkpointed after 21 s; the demo then created `STOP`; the loop sent SIGINT | Steps 2 to 4 done, each checkpointed; Status set to `done` |
 | Ended | `STOP file` (result `error_during_execution`, exit 0), 7 turns | `success`, 10 turns, then `DONE` with no further session |
-| Cost (Claude Code's estimate) | $0.0262 | $0.0461 |
+| Cost (Claude Code's estimate) | $0.0264 | $0.0462 |
 
 On Claude Code v2.1.316, SIGINT ended the turn, the process exited with code 0, and the JSON result
 still carried the turn count and cost. The docs say SIGTERM exits with code 143 and records no result

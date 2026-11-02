@@ -155,8 +155,11 @@ def main(argv=None):
     if os.path.exists(runs_log):
         last = [l for l in open(runs_log, encoding="utf-8") if l.strip()]
         if last:
-            r = json.loads(last[-1])
-            previous = f"session {r['run']} ended with '{r['outcome']}' after {r.get('num_turns')} turns"
+            try:
+                r = json.loads(last[-1])
+                previous = f"session {r['run']} ended with '{r['outcome']}' after {r.get('num_turns')} turns"
+            except ValueError:
+                previous = "unknown (the last line of .overnight/runs.jsonl is not valid JSON)"
 
     loop_deadline = time.monotonic() + a.hours * 3600
     spent = 0.0

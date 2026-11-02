@@ -1,11 +1,11 @@
 # run 1: interrupted with 'touch todo-repo/STOP' once HANDOFF.md shows Run: 1
-[23:30:25] resume check OK: status=in-progress run=0 next=['Start with step 1 in the task file.']
-[23:30:25] session 1: starting (limits: 8 min, $0.50, 40 turns)
-[23:30:46] (demo) first checkpoint seen; touch todo-repo/STOP
-[23:30:47] session 1: STOP file; sending SIGINT and waiting up to 30s
-[23:30:47] session 1: ended 'STOP file' (result: error_during_execution) exit=0 turns=7 cost=$0.0262 handoff_changed=True
-[23:30:47] handoff now: status=in-progress run=1 next=['Step 2: remove duplicates']
-[23:30:47] STOPPED: STOP file. The next run resumes from HANDOFF.md.
+[08:53:54] resume check OK: status=in-progress run=0 next=['Start with step 1 in the task file.']
+[08:53:54] session 1: starting (limits: 8 min, $0.50, 40 turns)
+[08:54:15] (demo) first checkpoint seen; touch todo-repo/STOP
+[08:54:16] session 1: STOP file; sending SIGINT and waiting up to 30s
+[08:54:17] session 1: ended 'STOP file' (result: error_during_execution) exit=0 turns=7 cost=$0.0264 handoff_changed=True
+[08:54:17] handoff now: status=in-progress run=1 next=['Step 2: remove duplicates']
+[08:54:17] STOPPED: STOP file. The next run resumes from HANDOFF.md.
 
 ---- HANDOFF.md after this run ----
 # Handoff
@@ -13,12 +13,12 @@
 Task: Tidy the TODO list
 Status: in-progress
 Run: 1
-Updated: 2026-11-02T12:30:25Z
+Updated: 2026-11-02T21:53:54Z
 
 ## State
 
-Step 1 finished: every line in TODO.md is now `- [ ]` or `- [x]`.
-Duplicates remain, and there are no Open/Done headings yet.
+Step 1 done: all tasks in TODO.md use the `- [ ]` / `- [x]` format.
+Duplicates remain (login timeout, release notes); no headings added yet.
 
 ## Done
 
@@ -48,4 +48,4 @@ Duplicates remain, and there are no Open/Done headings yet.
 - [ ] answer the open issues
 
 ---- .overnight/runs.jsonl ----
-{"run": 1, "started": "2026-11-02T12:30:25Z", "ended": "2026-11-02T12:30:47Z", "seconds": 23, "outcome": "STOP file", "subtype": "error_during_execution", "exit": 0, "num_turns": 7, "cost_usd": 0.026188, "handoff_changed": true}
+{"run": 1, "started": "2026-11-02T21:53:54Z", "ended": "2026-11-02T21:54:17Z", "seconds": 22, "outcome": "STOP file", "subtype": "error_during_execution", "exit": 0, "num_turns": 7, "cost_usd": 0.0263519, "handoff_changed": true}
