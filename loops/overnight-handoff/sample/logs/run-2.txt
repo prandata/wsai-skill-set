@@ -1,0 +1,55 @@
+# run 2: STOP removed, same command again
+[08:54:17] resume check OK: status=in-progress run=1 next=['Step 2: remove duplicates']
+[08:54:17] session 2: starting (limits: 8 min, $0.50, 40 turns)
+[08:54:50] session 2: ended 'success' (result: success) exit=0 turns=10 cost=$0.0462 handoff_changed=True
+[08:54:50] handoff now: status=done run=2 next=[]
+[08:54:50] resume check OK: status=done run=2 next=[]
+[08:54:50] DONE: the handoff says the task is finished. Nothing to run.
+
+---- HANDOFF.md after this run ----
+# Handoff
+
+Task: Tidy the TODO list
+Status: done
+Run: 2
+Updated: 2026-11-02T21:54:17Z
+
+## State
+
+All four steps are finished. TODO.md has one checkbox format, no duplicates,
+Open/Done headings, and Open tasks ordered p1, p2, then untagged.
+
+## Done
+
+- Step 1: one format
+- Step 2: remove duplicates
+- Step 3: Open/Done headings
+- Step 4: priority order under Open
+
+## Next
+
+- (none)
+
+## Open questions
+
+- (none)
+
+---- TODO.md after this run ----
+# TODO
+
+## Open
+
+- [ ] fix the login timeout (p1)
+- [ ] back up the database (p1)
+- [ ] write the release notes (p2)
+- [ ] add a dark mode toggle
+- [ ] answer the open issues
+
+## Done
+
+- [x] rename the config file
+- [x] update the README
+
+---- .overnight/runs.jsonl ----
+{"run": 1, "started": "2026-11-02T21:53:54Z", "ended": "2026-11-02T21:54:17Z", "seconds": 22, "outcome": "STOP file", "subtype": "error_during_execution", "exit": 0, "num_turns": 7, "cost_usd": 0.0263519, "handoff_changed": true}
+{"run": 2, "started": "2026-11-02T21:54:17Z", "ended": "2026-11-02T21:54:50Z", "seconds": 33, "outcome": "success", "subtype": "success", "exit": 0, "num_turns": 10, "cost_usd": 0.0462151, "handoff_changed": true}
