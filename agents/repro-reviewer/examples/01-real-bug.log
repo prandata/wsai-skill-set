@@ -1,0 +1,159 @@
+# repro-reviewer example: 01-real-bug
+
+Sample repo: make-sample-repo.sh, branch real-bug @ 8bc7eded2f4b0ea4f940d16a09c118fcc7f4b536
+Run: 2026-11-01T12:54:00Z, 2.1.316 (Claude Code), model claude-opus-5-5, exit 0, 6 turns, 52 s
+Command: run-example.sh (claude -p --agent repro-reviewer, isolated from user settings)
+
+## Prompt
+
+    Review the last commit on this branch.
+
+## Tool calls (5, in order)
+
+[1] Bash: cd /tmp/tinyshop; git rev-parse HEAD; echo "exit $?"; git status --porcelain; echo "exit $?"; git log --oneline -3; git show --stat HEAD; git diff HEAD~1 HEAD
+--- output:
+    8bc7eded2f4b0ea4f940d16a09c118fcc7f4b536
+    exit 0
+    exit 0
+    8bc7ede pricing: simpler split_bill
+    241e455 tinyshop: split_bill, parse_duration, download_link
+    commit 8bc7eded2f4b0ea4f940d16a09c118fcc7f4b536
+    Author: Sample Author <author@example.com>
+    Date:   Tue Jan 6 09:00:00 2026 +0000
+
+        pricing: simpler split_bill
+        
+        One expression instead of divmod. Shares still add up to the total.
+
+     tinyshop/pricing.py | 9 +++------
+     1 file changed, 3 insertions(+), 6 deletions(-)
+    diff --git a/tinyshop/pricing.py b/tinyshop/pricing.py
+    index 26fdc47..4b2d5fb 100644
+    --- a/tinyshop/pricing.py
+    +++ b/tinyshop/pricing.py
+    @@ -1,9 +1,6 @@
+     def split_bill(total_cents, people):
+    -    """Split a bill into whole-cent shares that add up to total_cents.
+    -
+    -    The first (total_cents % people) shares get one extra cent.
+    -    """
+    +    """Split a bill into whole-cent shares that add up to total_cents."""
+         if people < 1:
+             raise ValueError("people must be at least 1")
+    -    base, rem = divmod(total_cents, people)
+    -    return [base + 1 if i < rem else base for i in range(people)]
+    +    share = round(total_cents / people)
+    +    return [share] * people
+
+[2] Bash: cd /tmp/tinyshop; ls -R | grep -v __pycache__ | head -30; python3 -c "from tinyshop.pricing import split_bill as s; r=s(100,3); print(r, sum(r))"; echo "exit $?"; python3 -c "from tinyshop.pricing import split_bill as s; r=s(200,3); print(r, sum(r))"; echo "exit $?"; python3 -c "from tinyshop.pricing import split_bill as s; r=s(99,3); print(r, sum(r))"; echo "exit $?"
+--- output:
+    README.md
+    tests
+    tinyshop
+
+    ./tests:
+    __init__.py
+    test_durations.py
+    test_links.py
+    test_pricing.py
+
+    ./tinyshop:
+    __init__.py
+    durations.py
+    links.py
+    pricing.py
+    [33, 33, 33] 99
+    exit 0
+    [67, 67, 67] 201
+    exit 0
+    [33, 33, 33] 99
+    exit 0
+
+[3] Bash: cd /tmp/tinyshop; cat tests/test_pricing.py; python3 -B -m pytest -q -p no:cacheprovider 2>&1 | tail -5; python3 -B -m pytest -q -p no:cacheprovider >/dev/null 2>&1; echo "exit $?"; git status --porcelain
+--- output:
+    import unittest
+    from tinyshop.pricing import split_bill
+
+
+    class SplitBill(unittest.TestCase):
+        def test_even(self):
+            self.assertEqual(split_bill(900, 3), [300, 300, 300])
+
+        def test_no_people(self):
+            with self.assertRaises(ValueError):
+                split_bill(900, 0)
+
+
+    if __name__ == "__main__":
+        unittest.main()
+    /opt/homebrew/opt/python@3.14/bin/python3.14: No module named pytest
+    exit 1
+    ?? tinyshop/__pycache__/
+
+[4] Bash: cd /tmp/tinyshop; python3 -B -m unittest discover -s tests -t . 2>&1 | tail -3; python3 -B -m unittest discover -s tests -t . >/dev/null 2>&1; echo "exit $?"; git show HEAD~1:tinyshop/pricing.py > /dev/null; python3 -B -c "
+    exec(compile(__import__('subprocess').check_output(['git','show','HEAD~1:tinyshop/pricing.py']).decode(),'old','exec'))
+    r=split_bill(100,3); print(r, sum(r))"; echo "exit $?"
+--- output:
+    Ran 5 tests in 0.000s
+
+    OK
+    exit 0
+    [34, 33, 33] 100
+    exit 0
+
+[5] Bash: cd /tmp/tinyshop; find . -name __pycache__ -not -path './.git/*'; rm -rf tinyshop/__pycache__ tests/__pycache__; git status --porcelain; echo "exit $?"
+--- output:
+    ./tinyshop/__pycache__
+    exit 0
+
+## Final report
+
+## Reviewed
+`HEAD` (branch tip) @ `8bc7eded2f4b0ea4f940d16a09c118fcc7f4b536`, "pricing: simpler split_bill". One file changed: `tinyshop/pricing.py` (+3/−6). I got the diff with `git diff HEAD~1 HEAD`. The working tree was clean before I started.
+
+## Findings (reproduced)
+### F1: `split_bill` shares no longer add up to the total when it doesn't divide evenly
+Where: tinyshop/pricing.py:5-6 (`share = round(total_cents / people)`; `return [share] * people`)
+Command:
+    python3 -c "from tinyshop.pricing import split_bill as s; r=s(100,3); print(r, sum(r))"
+Output (exit 0):
+    [33, 33, 33] 99
+Rounding up also creates money:
+    python3 -c "from tinyshop.pricing import split_bill as s; r=s(200,3); print(r, sum(r))"
+Output (exit 0):
+    [67, 67, 67] 201
+Expected: `[34, 33, 33] 100`. The parent commit's version gives exactly that (I ran `HEAD~1:tinyshop/pricing.py` and got `[34, 33, 33] 100`, exit 0). The commit message says "Shares still add up to the total", and the docstring still says the same.
+Fix: Put back the old version: `base, rem = divmod(total_cents, people)` and `return [base + 1 if i < rem else base for i in range(people)]`. Also add a test that checks `sum(split_bill(100, 3)) == 100`.
+
+## Claims checked
+| Claim | Source | Result | Evidence |
+|---|---|---|---|
+| "Shares still add up to the total." | Commit message | **refuted** | `split_bill(100,3)` → `[33, 33, 33] 99`; `split_bill(200,3)` → `[67, 67, 67] 201` |
+| "Split a bill into whole-cent shares that add up to total_cents." | Docstring in the new code | **refuted** | Same output as above |
+| Project tests pass | Implied | confirmed, but they don't cover this | `python3 -B -m unittest discover -s tests -t .` → `Ran 5 tests in 0.000s` / `OK`, exit 0. `tests/test_pricing.py` only tests an even split (`900, 3`) and `people=0`, so it can't catch F1. |
+
+## Not reproduced
+None.
+
+## Not run
+Nothing. `pytest` is not installed here, so I ran the suite with `unittest` instead, which works because all the tests are `unittest.TestCase` classes.
+
+## Commands run
+1. `git rev-parse HEAD; git status --porcelain; git log --oneline -3; git show --stat HEAD; git diff HEAD~1 HEAD`: exit 0 for each (`rev-parse` exit 0; `status` exit 0, no output)
+2. `ls -R | grep -v __pycache__ | head -30`: exit 0
+3. `python3 -c "...split_bill(100,3)..."`: exit 0, `[33, 33, 33] 99`
+4. `python3 -c "...split_bill(200,3)..."`: exit 0, `[67, 67, 67] 201`
+5. `python3 -c "...split_bill(99,3)..."`: exit 0, `[33, 33, 33] 99`
+6. `cat tests/test_pricing.py`: exit 0
+7. `python3 -B -m pytest -q -p no:cacheprovider`: exit 1, `No module named pytest`
+8. `git status --porcelain`: exit 0, `?? tinyshop/__pycache__/` (left by runs 3–5)
+9. `python3 -B -m unittest discover -s tests -t .`: exit 0, `Ran 5 tests` / `OK`
+10. `git show HEAD~1:tinyshop/pricing.py > /dev/null`: exit 0
+11. `python3 -B -c "exec(<HEAD~1 pricing.py>); split_bill(100,3)"`: exit 0, `[34, 33, 33] 100`
+12. `find . -name __pycache__ -not -path './.git/*'`: exit 0, `./tinyshop/__pycache__`
+13. `rm -rf tinyshop/__pycache__ tests/__pycache__`: exit 0. This removed only the `tinyshop/__pycache__/` folder my runs created.
+14. `git status --porcelain`: exit 0, no output (tree clean again)
+
+I didn't need a scratch folder, so there was nothing to delete.
+
+VERDICT: FIX @ 8bc7eded2f4b0ea4f940d16a09c118fcc7f4b536
