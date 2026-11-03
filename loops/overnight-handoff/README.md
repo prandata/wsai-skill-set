@@ -93,6 +93,12 @@ under Done, Next or Open questions is not a `- ` item; a section has no items; S
 `in-progress` with nothing under Next; Status is `blocked` with no question; a `{{placeholder}}` is
 left; or the file is over 150 lines or 16 KB (a handoff that keeps growing is turning into a transcript).
 
+Only the four exact headings (`## State`, `## Done`, `## Next`, `## Open questions`) start a section.
+Any other line that begins with `## ` is text: State is free prose, and a sentence that wraps onto a
+line such as `## Open and ## Done sections ...` is part of State. The same line is refused before the
+first section or under Done, Next or Open questions, where every line must be a `- ` item. A State
+line that is exactly one of the four headings counts as that section, so it is refused as a repeat.
+
 ## The claude command, and where each flag comes from
 
 From the Claude Code docs, fetched 2 November 2026: [Run Claude Code programmatically](https://code.claude.com/docs/en/headless),

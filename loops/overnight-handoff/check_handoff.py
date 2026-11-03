@@ -31,6 +31,11 @@ def _items(lines):
     return items, bad
 
 
+def _heading(line):
+    """The section name if the line is a '## ' heading, else None. Trailing spaces are ignored."""
+    return line[3:].strip() if line.startswith("## ") else None
+
+
 def _real(items):
     return [i for i in items if i.lower() not in EMPTY_ITEMS]
 
@@ -50,8 +55,17 @@ def check(text):
     if first != "# Handoff":
         problems.append("first line must be '# Handoff'")
 
-    # Header fields: everything before the first '## ' heading.
-    head_end = next((i for i, l in enumerate(lines) if l.startswith("## ")), len(lines))
+    # Only the template's four exact headings start a section. Any other line that begins with
+    # '## ' is text: free prose may wrap onto a line such as '## Open and ## Done sections ...'.
+    # Such a line is still refused where it cannot be content: before the first section, and in
+    # the three list sections (where every line must be a '- ' item).
+    found = [(i, l[3:].strip()) for i, l in enumerate(lines) if _heading(l) in SECTIONS]
+    head_end = found[0][0] if found else len(lines)
+    for l in lines[:head_end]:
+        if l.startswith("## "):
+            problems.append(f"unexpected section '{l.strip()[:60]}'")
+
+    # Header fields: everything before the first section.
     for name in FIELDS:
         hits = [l for l in lines[:head_end] if re.match(rf"^{re.escape(name)}:\s", l + " ")]
         if len(hits) != 1:
@@ -74,15 +88,12 @@ def check(text):
         except ValueError:
             problems.append(f"Updated is '{updated}'; it must be an ISO 8601 time such as 2026-11-02T22:00:00Z")
 
-    # Sections: exactly these four, once each, in this order, and nothing else.
-    found = [(i, l[3:].strip()) for i, l in enumerate(lines) if l.startswith("## ")]
+    # Sections: exactly these four, once each, in this order.
     names = [n for _, n in found]
-    for extra in [n for n in names if n not in SECTIONS]:
-        problems.append(f"unexpected section '## {extra}'")
     for name in SECTIONS:
         if names.count(name) != 1:
             problems.append(f"section '## {name}' must appear exactly once (found {names.count(name)})")
-    if [n for n in names if n in SECTIONS] != SECTIONS and all(names.count(n) == 1 for n in SECTIONS):
+    if names != SECTIONS and all(names.count(n) == 1 for n in SECTIONS):
         problems.append("sections must be in this order: " + ", ".join(SECTIONS))
 
     body = {}
@@ -99,7 +110,10 @@ def check(text):
         items, bad = _items(body[name])
         parsed[name] = items
         for b in bad:
-            problems.append(f"'{name}' has a line that is not a '- ' list item: {b[:60]}")
+            if b.startswith("## "):
+                problems.append(f"unexpected section '{b[:60]}' (only {', '.join(SECTIONS)} are sections)")
+            else:
+                problems.append(f"'{name}' has a line that is not a '- ' list item: {b[:60]}")
         if not items:
             problems.append(f"'{name}' has no items (write '- (none)' if there are none)")
 

@@ -32,6 +32,11 @@ if mode == "done":
     h = re.sub(r"^Status: .*", "Status: done", h, flags=re.M)
     h = re.sub(r"## Next\n\n(- .*\n)+", "## Next\n\n- (none)\n", h)
     open("HANDOFF.md", "w").write(h); result()
+if mode == "done-wrapped":  # finishes, and its State wraps onto a line that starts with '## '
+    h = re.sub(r"^Status: .*", "Status: done", h, flags=re.M)
+    h = re.sub(r"## Next\n\n(- .*\n)+", "## Next\n\n- (none)\n", h)
+    h = re.sub(r"## State\n\n.*?\n\n## Done", "## State\n\n" + os.environ["FAKE_STATE"] + "\n\n## Done", h, flags=re.S)
+    open("HANDOFF.md", "w").write(h); result()
 if mode == "blocked":
     h = re.sub(r"^Status: .*", "Status: blocked", h, flags=re.M)
     h = h.replace("## Open questions\n\n- (none)", "## Open questions\n\n- Which file is the real config?")
@@ -95,6 +100,32 @@ ok("blocked without a question", any("blocked" in p for p in problems(GOOD.repla
 ok("blocked with a question is fine", problems(GOOD.replace("Status: in-progress", "Status: blocked").replace("- (none)\n", "- Which file?\n")) == [])
 ok("too long", any("lines" in p for p in problems(GOOD.replace("Not started.", "x\n" * 200))))
 ok("time with offset is fine", problems(GOOD.replace("22:00:00Z", "22:00:00+11:00")) == [])
+
+# A State line that wraps onto '## ...' is prose, not a section. This is the exact State text from
+# a real sample run that the old check refused after the agent had finished every step.
+WRAPPED_STATE = ("All four steps finished. TODO.md has one task format, no duplicates,\n"
+                 "## Open and ## Done sections, and Open sorted (p1), (p2), then untagged.")
+FINISHED = (GOOD.replace("Status: in-progress", "Status: done").replace("Run: 0", "Run: 2")
+            .replace("Not started. Nothing has been changed yet.", WRAPPED_STATE)
+            .replace("- (none yet)", "- Step 1: one format\n- Step 2: remove duplicates\n"
+                     "- Step 3: done at the bottom\n- Step 4: priority order")
+            .replace("- Start with step 1 in the task file.", "- (none)"))
+ok("wrapped '## ' line in State (the real run) passes", problems(FINISHED) == [], problems(FINISHED))
+ok("wrapped State still reads as done", check(FINISHED)[1].get("Status") == "done", check(FINISHED)[1])
+ok("'## Open' and '## Done sections' alone in State are prose",
+   problems(GOOD.replace("Not started.", "TODO.md now has\n## Open\nand\n## Done sections.")) == [])
+ok("heading text with trailing spaces is still the heading", problems(GOOD.replace("## Next\n", "## Next  \n")) == [])
+# What must still fail, with the wrapped State in place.
+ok("wrapped State + 'Status: almost done' is refused",
+   any("Status is 'almost done'" in p for p in problems(FINISHED.replace("Status: done", "Status: almost done"))))
+ok("an exact '## Done' line in State is a second Done section",
+   any("exactly once" in p for p in problems(GOOD.replace("Not started. Nothing has been changed yet.", "Not started.\n## Done"))))
+ok("stray '## ' heading before the first section is refused",
+   any("unexpected section '## Notes'" in p for p in problems(GOOD.replace("## State", "## Notes\n\nhi\n\n## State"))))
+ok("stray '## ' heading inside Next is refused",
+   any("unexpected section '## Later'" in p for p in problems(GOOD.replace("- Start with step 1", "## Later\n- Start with step 1"))))
+ok("misspelt heading is refused", any("'## Next'" in p for p in problems(GOOD.replace("## Next", "## Next steps"))))
+ok("'### ' subheading inside Done is refused", any("not a '- ' list item" in p for p in problems(GOOD.replace("- (none yet)", "### Today\n- (none yet)"))))
 readme = open(os.path.join(loop, "README.md"), encoding="utf-8").read()
 example = readme.split("## The handoff format", 1)[1].split("```markdown\n", 1)[1].split("```", 1)[0]
 ok("README's handoff example passes the resume check", problems(example) == [], problems(example))
@@ -153,6 +184,12 @@ r, calls = runner(d, "done")
 ok("done: loop stops after the session that finished, no further call", r.returncode == 0 and len(calls) == 1 and "DONE" in r.stdout, r.stdout)
 r, calls = runner(d, "done")
 ok("done handoff: next invocation calls nothing", r.returncode == 0 and len(calls) == 1, r.stdout)
+
+d = workdir()
+r, calls = runner(d, "done-wrapped", env_extra={"FAKE_STATE": WRAPPED_STATE})
+ok("done with a wrapped '## ' line in State: DONE, exit 0, not REFUSED",
+   r.returncode == 0 and "DONE" in r.stdout and "REFUSED" not in r.stdout and len(calls) == 1
+   and "\n## Open and ## Done sections" in open(os.path.join(d, "HANDOFF.md")).read(), r.stdout)
 
 d = workdir()
 r, calls = runner(d, "blocked")
