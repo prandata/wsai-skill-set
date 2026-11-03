@@ -23,12 +23,23 @@ cp -r wsai-skill-set/skills/wsai-skill-set ~/.claude/skills/ && cp wsai-skill-se
 ## Agents (Claude Code subagents)
 
 ```bash
-mkdir -p .claude/agents && cp wsai-skill-set/agents/repro-reviewer/repro-reviewer.md .claude/agents/
+mkdir -p .claude/agents
+for a in repro-reviewer test-writer security-reviewer docs-updater commit-writer; do
+  cp wsai-skill-set/agents/$a/$a.md .claude/agents/
+done
 ```
+
+Copy the `<name>.md` files only; the READMEs and examples stay here. Claude Code scans `.claude/agents/` recursively ([docs](https://code.claude.com/docs/en/sub-agents#choose-the-subagent-scope)), so copying whole folders would put the READMEs among your agent definitions.
 
 | Agent | What it does |
 |---|---|
 | [`repro-reviewer`](agents/repro-reviewer/README.md) | Read-only code reviewer that must reproduce every finding before it reports it: each one comes with the command it ran and the quoted output, a claim it can't run blocks a PASS, and it ends with `VERDICT: PASS\|FIX @ <sha>`. Three saved example runs (a real bug, a false alarm, one it can't run) and offline checks in `tests/test_repro_reviewer.py`. |
+| [`test-writer`](agents/test-writer/README.md) | Writes unit tests for code that has none, runs them, and reports a failing test as a possible bug instead of weakening the test or editing the source. Sonnet. |
+| [`security-reviewer`](agents/security-reviewer/README.md) | Read-only security review (`tools: Read, Grep, Glob`, so it can't run or edit anything): each issue with severity, `file:line`, the line quoted and the smallest fix. Sonnet. |
+| [`docs-updater`](agents/docs-updater/README.md) | Brings README and docs in line with the code after a flag, command or name changes, citing the code line for each fix. Told to edit Markdown only. Sonnet. |
+| [`commit-writer`](agents/commit-writer/README.md) | Writes one commit message for what is staged, in the repo's style, with no trailers, and leaves the commit to you. Haiku. Its README shows the permission rules that make "never commits" a hard block. |
+
+Offline checks for the four list agents: `python3 tests/test_subagents.py`. Each was run once with Claude Code 2.1.317 on a made-up repo on 4 Nov 2026 (AEDT); their READMEs give the results and say which limits are tool limits and which are prompt rules.
 
 ## MCP servers
 
