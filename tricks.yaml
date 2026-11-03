@@ -26,7 +26,7 @@ tricks:
   how: github.com/... -> gitingest.com/pallets/click
   you_get: Token count plus a full text digest
   status: verified
-  checked: '2026-11-01'
+  checked: '2026-11-03'
   evidence: 'yes, 30 Oct, API JSON: 166 files, 220.1k tokens'
   sign_in: 'no'
   novelty: overused
@@ -39,7 +39,6 @@ tricks:
   title: Turn a repo into one text page
   try: gitingest.com/pallets/click
   reader: Change github.com to gitingest.com. You get a summary, the file tree and every file, ready to paste into your AI.
-  last_fail: 2026-11-03 HTTP 0
 - id: T03
   name: Press `.` on any repo
   category: understand-a-repo
@@ -408,6 +407,7 @@ tricks:
   title: Get a repo as JSON
   try: api.github.com/repos/pallets/click
   reader: Stars, dates, licence and more, ready for a script.
+  last_fail: 2026-11-03 HTTP 403
 - id: T24
   name: Notebook in Colab
   category: notebooks-and-packages
@@ -620,7 +620,7 @@ tricks:
   how: curl cheat.sh/tar
   you_get: Instant tar examples
   status: verified
-  checked: '2026-11-01'
+  checked: '2026-11-03'
   evidence: yes, 30 Oct, curl output
   sign_in: 'no'
   novelty: known
@@ -631,14 +631,13 @@ tricks:
   title: Examples for any command
   try: curl cheat.sh/tar
   reader: Ready-to-copy examples in your terminal.
-  last_fail: 2026-11-03 HTTP 0
 - id: T37
   name: Weather in the terminal
   category: terminal
   how: curl wttr.in/Sydney
   you_get: ASCII weather art
   status: verified
-  checked: '2026-11-01'
+  checked: '2026-11-03'
   evidence: yes, 30 Oct, output "Overcast +20 °C"
   sign_in: 'no'
   novelty: overused
@@ -649,7 +648,6 @@ tricks:
   title: Weather in the terminal
   try: curl wttr.in/Sydney
   reader: A forecast as text art.
-  last_fail: 2026-11-03 HTTP 0
 - id: T38
   name: QR code in the terminal
   category: terminal
