@@ -30,6 +30,12 @@ mkdir -p .claude/agents && cp wsai-skill-set/agents/repro-reviewer/repro-reviewe
 |---|---|
 | [`repro-reviewer`](agents/repro-reviewer/README.md) | Read-only code reviewer that must reproduce every finding before it reports it: each one comes with the command it ran and the quoted output, a claim it can't run blocks a PASS, and it ends with `VERDICT: PASS\|FIX @ <sha>`. Three saved example runs (a real bug, a false alarm, one it can't run) and offline checks in `tests/test_repro_reviewer.py`. |
 
+## MCP servers
+
+| Server | What it does |
+|---|---|
+| [`notes-readonly`](mcp/notes-readonly/README.md) | Lets Claude Code list, search and read one folder of your Markdown notes, and nothing else. No write tool; `../`, absolute paths and every symlink are refused; a per-file size cap. 99 lines on the official MCP Python SDK, 34 tests. Install: `claude mcp add --scope user --transport stdio notes -- uv run --script /path/to/server.py ~/notes`. |
+
 ## Templates
 
 [`templates/claude-code-memory/`](templates/claude-code-memory/): copy-paste CLAUDE.md, AGENTS.md, SKILL.md and a
