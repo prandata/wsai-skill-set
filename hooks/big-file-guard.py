@@ -12,7 +12,9 @@ import sys
 
 LIMIT_MB = 5
 
-cmd = json.load(sys.stdin).get("tool_input", {}).get("command", "")
+data = json.load(sys.stdin)
+inp = (data.get("tool_input") if isinstance(data, dict) else None) or {}
+cmd = str(inp.get("command") or "")
 
 
 def words(part):
@@ -20,7 +22,7 @@ def words(part):
     return [a or b or c for a, b, c in re.findall(r"'([^']*)'|\"([^\"]*)\"|(\S+)", part)]
 
 
-adds = [w[2:] for w in map(words, re.split(r"&&|\|\||;|\|", cmd)) if w[:2] == ["git", "add"]]
+adds = [w[2:] for w in map(words, re.split(r"&&|\|\||;|\||\n", cmd)) if w[:2] == ["git", "add"]]
 out = "".join(subprocess.run(["git", "add", "--dry-run", *a], capture_output=True, text=True).stdout
               for a in adds)
 big = [f"{f} ({os.path.getsize(f) / 1048576:.0f} MB)"

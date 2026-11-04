@@ -18,7 +18,9 @@ PATTERNS = {
     "API key": r"sk-[A-Za-z0-9_-]{20,}",
 }
 
-cmd = json.load(sys.stdin).get("tool_input", {}).get("command", "")
+data = json.load(sys.stdin)
+inp = (data.get("tool_input") if isinstance(data, dict) else None) or {}
+cmd = str(inp.get("command") or "")
 # "git ... commit" anywhere, so git -c x=y commit, git -C dir commit and git  commit count too.
 if not re.search(r"\bgit\b.*\bcommit\b", cmd, re.S):
     sys.exit(0)

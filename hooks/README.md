@@ -8,7 +8,7 @@ From the What Survives in AI Short "5 free Claude Code hooks that stop expensive
 | 2 | [`secret-scan.py`](secret-scan.py) | `PreToolUse`, `Bash` | A `git commit` that would include an AWS access key, a GitHub token, a private key or an `sk-` API key | A commit of `config.js` holding an AWS key: the commit never ran |
 | 3 | [`big-file-guard.py`](big-file-guard.py) | `PreToolUse`, `Bash` | A `git add` that would stage a file over 5 MB. It asks `git add --dry-run` what would be added, which stages nothing | A 60 MB `data/orders-dump.sql` before it reached git |
 | 4 | [`tests-before-done.py`](tests-before-done.py) | `Stop` | Claude finishing while the tests fail. It runs `npm test --silent` and sends Claude back with the failures | Claude renamed `total` to `sum` and said done; the test that imports `total` failed, so Claude went back, found the broken import and reported it (we had told it to edit only `cart.js`) |
-| 5 | [`env-guard.py`](env-guard.py) | `PreToolUse`, `Read\|Edit\|Write\|Bash` | A file path or command that names `.env`, `.env.local`, `.env*` or `.ENV`. `.env.example` stays readable | `grep -E "^DATABASE_URL" .env` when we asked which database the app uses: the password stayed put |
+| 5 | [`env-guard.py`](env-guard.py) | `PreToolUse`, `Read\|Edit\|Write\|Bash` | A file path or command that names `.env`, `.env.local`, `.env.production.local`, `.env*` or `.ENV`. `.env.example` stays readable | `grep -E "^DATABASE_URL" .env` when we asked which database the app uses: the password stayed put |
 
 ## Install
 
@@ -28,7 +28,7 @@ Needs `bash`, `python3` and `git`. Hook 4 runs `npm test --silent` and does noth
 
 ## Tests
 
-`python3 tests/test_hooks.py` runs 51 offline cases on throwaway git repos: the exact commands from the Short's runs, the bypasses our red team tried, and the gaps below, which pass through on purpose so the list stays honest. Hook 1 has its own 143 cases in `tests/test_hook.py`.
+`python3 tests/test_hooks.py` runs 65 offline cases on throwaway git repos (63 when `npm` and `node` are not installed): the exact commands from the Short's runs, the bypasses our red team and a second reviewer tried, odd input that must not crash a hook, and the gaps below, which pass through on purpose so the list stays honest. Hook 1 has its own 143 cases in `tests/test_hook.py`.
 
 ## How they block
 
@@ -45,7 +45,7 @@ These are guardrails, not a sandbox. They read the command text, so these get pa
 | Hook | Gets past it |
 |---|---|
 | 1 block-dangerous | `git reset --hard` and `git clean -fdx` (not covered). It also blocks `bash`, `sh -c`, `eval` and `source`, so `bash script.sh` and `source .venv/bin/activate` are refused. See "Known limits of the hook" in the [main README](../README.md) |
-| 2 secret-scan | Secrets in other shapes than its four patterns, and a commit run from a script rather than typed as `git ... commit` |
+| 2 secret-scan | Secrets in other shapes than its four patterns; a commit run from a script rather than typed as `git ... commit`; `git -C other-dir commit` (it scans the project folder, not the one `-C` names). It errs the other way too: an untracked file holding a key blocks every commit until you move the key out or ignore the file |
 | 3 big-file-guard | `cd data && git add file`, `git -C dir add`, and `git commit -a` with a tracked file that grew past 5 MB |
 | 4 tests-before-done | Anything your tests don't test |
 | 5 env-guard | A command that never names the file: a recursive grep, or a glob like `.en?`. Tools its matcher does not list, such as `Grep` |
@@ -54,4 +54,4 @@ In our env-guard run, Claude's first search was a recursive `grep` over the fold
 
 ## Where this code comes from
 
-These are the files from the Short's recorded runs, with the fixes our red team asked for: secret-scan also catches `git -c ... commit`, `git -C . commit` and `git  commit`; env-guard also catches `.env*`, `.env?` and `.ENV`; tests-before-done does nothing without a `package.json` and prints the first lines of any failure it can't classify. The YouTube description and the Substack Note carry the same logic written flat, so a description box can't break it.
+These are the files from the Short's recorded runs, with the fixes our red team asked for: secret-scan also catches `git -c ... commit`, `git -C . commit` and `git  commit`; env-guard also catches `.env*`, `.env?` and `.ENV`; tests-before-done does nothing without a `package.json` and prints the first lines of any failure it can't classify. A second review added: big-file-guard splits commands on new lines too, env-guard catches names with two suffixes such as `.env.production.local`, and no hook crashes on odd input. The YouTube description and the Substack Note carry the earlier version written flat, so a description box can't break it; this folder is the current one.

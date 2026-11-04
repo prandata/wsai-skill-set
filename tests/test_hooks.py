@@ -69,9 +69,17 @@ check("key already staged: git commit -m x", "secret-scan.py", s, bash("git comm
 for name, line in [("GitHub token", "ghp_" + "a" * 36), ("private key", "-----BEGIN OPENSSH " + "PRIVATE KEY-----"),
                    ("API key", "sk-" + "b" * 24)]:
     d = repo("secret-" + name.replace(" ", "-"), {"notes.txt": line + "\n"})
-    check(f"{name} in a new file", "secret-scan.py", d, bash("git commit -m x"), 2, stderr_has=name)
+    check(f"{name} in a new file (untracked files count, on purpose)", "secret-scan.py", d, bash("git commit -m x"), 2,
+          stderr_has=name)
 check("clean change: git commit -m x", "secret-scan.py", repo("secret-clean", {"version.js": "export const v = 2;\n"}),
       bash("git add version.js && git commit -m x"), 0)
+# known gap, listed in hooks/README.md: it scans the project folder, not the folder git -C names
+other = os.path.join(s, "other")
+os.makedirs(other)
+subprocess.run(["git", "init", "-q", "-b", "main"], cwd=other, env=env0, check=True)
+open(os.path.join(other, "c.txt"), "w").write(f"k={AWS_EXAMPLE}\n")
+check("known gap: git -C other commit, the key only in other/", "secret-scan.py",
+      repo("secret-gap"), bash(f"git -C {other} commit -am x"), 0)
 
 # Hook 3, big-file-guard. The Short: "It caught a sixty megabyte dump before it reached git."
 b = repo("big", {"version.js": "export const v = 2;\n"})
@@ -81,7 +89,8 @@ with open(os.path.join(b, "data", "orders-dump.sql"), "wb") as f:
 check('the Short\'s run: git add data version.js && git commit -m "snapshot"', "big-file-guard.py", b,
       bash('git add data version.js && git commit -m "snapshot"'), 2, stderr_has="data/orders-dump.sql (60 MB)")
 for c, w in [("git add -A", 2), ("git add .", 2), ("git add -f data/orders-dump.sql", 2), ('git add "data"', 2),
-             ("git status; git add data", 2), ("git add version.js", 0), ("git status", 0),
+             ("git status; git add data", 2), ("git status\ngit add data", 2), ("git add *.sql", 2),
+             ("git add version.js", 0), ("git status", 0),
              # known gaps, listed in hooks/README.md: the hook checks from the project folder only
              ("cd data && git add orders-dump.sql", 0), ("git -C . add data", 0)]:
     check(c, "big-file-guard.py", b, bash(c), w)
@@ -117,15 +126,25 @@ else:
 e = repo("env")
 check('the Short\'s run: grep -E "^DATABASE_URL" .env', "env-guard.py", e, bash('grep -E "^DATABASE_URL" .env'), 2,
       stderr_has="env-guard")
-for c, w in [("cat .env", 2), ("cat ./.env", 2), ("cat .env.local", 2), ("cat .env*", 2), ("cat .env?", 2),
+for c, w in [("cat .env", 2), ("cat ./.env", 2), ("cat .env.local", 2), ("cat .env.production.local", 2),
+             ("cat .env.example.local", 2), ("cat .env*", 2), ("cat .env?", 2),
              ("cat .ENV", 2), ("sed -n 1p .env", 2), ("source .env", 2), ("cat .env.example", 0), ("ls -a", 0),
-             ("cat env.js", 0),
+             ("cat env.js", 0), ("cat .envrc", 0),
              # known gaps, listed in hooks/README.md: a command that never names the file
              ("cat .en?", 0), ("grep -r DATABASE_URL .", 0)]:
     check(c, "env-guard.py", e, bash(c), w)
 for tool, path, w in [("Read", "/x/.env", 2), ("Edit", "/x/.env", 2), ("Write", "/x/.env.production", 2),
                       ("Read", "/x/.env.example", 0), ("Read", "/x/cart.js", 0)]:
     check(f"{tool} {path}", "env-guard.py", e, {"tool_name": tool, "tool_input": {"file_path": path}}, w)
+
+# Odd input: Claude Code always sends an object, but a hook must not crash on null or a non-string value.
+for hook, payload in [("secret-scan.py", {"tool_input": None}), ("big-file-guard.py", {"tool_input": None}),
+                      ("env-guard.py", {"tool_input": None}), ("env-guard.py", {"tool_input": {"command": 7}}),
+                      ("secret-scan.py", {"tool_input": {"command": ["git", "commit"]}}), ("big-file-guard.py", [])]:
+    check(f"odd input {json.dumps(payload)}: no crash", hook, e, payload, 0)
+check('odd input stop_hook_active "false" (a string): still runs the tests', "tests-before-done.py", t,
+      {"stop_hook_active": "false"}, 2, env=fail_cmd)
+check("odd input [] to the Stop hook: still runs the tests", "tests-before-done.py", t, [], 2, env=fail_cmd)
 
 # settings.json registers all five hooks on the events the README names.
 cfg = json.load(open(os.path.join(here, "..", "hooks", "settings.json")))["hooks"]

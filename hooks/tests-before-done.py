@@ -13,7 +13,8 @@ import os
 import subprocess
 import sys
 
-if json.load(sys.stdin).get("stop_hook_active"):
+data = json.load(sys.stdin)
+if isinstance(data, dict) and data.get("stop_hook_active") is True:
     sys.exit(0)
 test = os.environ.get("TEST_CMD", "npm test --silent")
 if test == "npm test --silent" and not os.path.isfile("package.json"):
