@@ -45,7 +45,7 @@ PreToolUse hook (`block-dangerous.sh` blocks recursive force-deletes of `/`, `~`
 
 ## Hooks
 
-[`hooks/`](hooks/): five Claude Code hooks that stop expensive mistakes: block-dangerous (hook 1, from the template above), secret-scan, big-file-guard, tests-before-done and env-guard, with one `settings.json` that registers all five. Each one blocked a real Claude Code session on test data; 65 offline cases in `tests/test_hooks.py`.
+[`hooks/`](hooks/): five Claude Code hooks that stop expensive mistakes: block-dangerous (hook 1, from the template above), secret-scan, big-file-guard, tests-before-done and env-guard, with one `settings.json` that registers all five. Each one blocked a real Claude Code session on test data; 68 offline cases in `tests/test_hooks.py`.
 
 ## Loops
 

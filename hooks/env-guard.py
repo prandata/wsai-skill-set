@@ -11,7 +11,8 @@ import re
 import sys
 
 data = json.load(sys.stdin)
-inp = (data.get("tool_input") if isinstance(data, dict) else None) or {}
+inp = data.get("tool_input") if isinstance(data, dict) else None
+inp = inp if isinstance(inp, dict) else {}
 target = str(inp.get("file_path") or inp.get("command") or "")
 if re.search(r"(^|[\s/'\"=<>])\.env(?!\.example(?=$|[\s'\";|&)]))(\.[\w-]+)*[*?]*(?=$|[\s'\";|&)])", target, re.I):
     print("Blocked by env-guard: .env holds secrets and is off limits. "

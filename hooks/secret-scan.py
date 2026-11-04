@@ -19,7 +19,8 @@ PATTERNS = {
 }
 
 data = json.load(sys.stdin)
-inp = (data.get("tool_input") if isinstance(data, dict) else None) or {}
+inp = data.get("tool_input") if isinstance(data, dict) else None
+inp = inp if isinstance(inp, dict) else {}
 cmd = str(inp.get("command") or "")
 # "git ... commit" anywhere, so git -c x=y commit, git -C dir commit and git  commit count too.
 if not re.search(r"\bgit\b.*\bcommit\b", cmd, re.S):

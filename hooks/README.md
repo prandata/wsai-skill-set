@@ -28,7 +28,7 @@ Needs `bash`, `python3` and `git`. Hook 4 runs `npm test --silent` and does noth
 
 ## Tests
 
-`python3 tests/test_hooks.py` runs 65 offline cases on throwaway git repos (63 when `npm` and `node` are not installed): the exact commands from the Short's runs, the bypasses our red team and a second reviewer tried, odd input that must not crash a hook, and the gaps below, which pass through on purpose so the list stays honest. Hook 1 has its own 143 cases in `tests/test_hook.py`.
+`python3 tests/test_hooks.py` runs 68 offline cases on throwaway git repos (66 when `npm` and `node` are not installed): the exact commands from the Short's runs, the bypasses our red team and a second reviewer tried, odd input that must not crash a hook, and the gaps below, which pass through on purpose so the list stays honest. Hook 1 has its own 143 cases in `tests/test_hook.py`.
 
 ## How they block
 

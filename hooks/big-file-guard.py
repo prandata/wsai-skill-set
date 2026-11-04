@@ -13,7 +13,8 @@ import sys
 LIMIT_MB = 5
 
 data = json.load(sys.stdin)
-inp = (data.get("tool_input") if isinstance(data, dict) else None) or {}
+inp = data.get("tool_input") if isinstance(data, dict) else None
+inp = inp if isinstance(inp, dict) else {}
 cmd = str(inp.get("command") or "")
 
 

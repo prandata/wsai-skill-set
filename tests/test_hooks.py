@@ -78,6 +78,7 @@ other = os.path.join(s, "other")
 os.makedirs(other)
 subprocess.run(["git", "init", "-q", "-b", "main"], cwd=other, env=env0, check=True)
 open(os.path.join(other, "c.txt"), "w").write(f"k={AWS_EXAMPLE}\n")
+subprocess.run(["git", "add", "c.txt"], cwd=other, env=env0, check=True)
 check("known gap: git -C other commit, the key only in other/", "secret-scan.py",
       repo("secret-gap"), bash(f"git -C {other} commit -am x"), 0)
 
@@ -140,6 +141,8 @@ for tool, path, w in [("Read", "/x/.env", 2), ("Edit", "/x/.env", 2), ("Write", 
 # Odd input: Claude Code always sends an object, but a hook must not crash on null or a non-string value.
 for hook, payload in [("secret-scan.py", {"tool_input": None}), ("big-file-guard.py", {"tool_input": None}),
                       ("env-guard.py", {"tool_input": None}), ("env-guard.py", {"tool_input": {"command": 7}}),
+                      ("secret-scan.py", {"tool_input": 7}), ("big-file-guard.py", {"tool_input": "x"}),
+                      ("env-guard.py", {"tool_input": [1]}),
                       ("secret-scan.py", {"tool_input": {"command": ["git", "commit"]}}), ("big-file-guard.py", [])]:
     check(f"odd input {json.dumps(payload)}: no crash", hook, e, payload, 0)
 check('odd input stop_hook_active "false" (a string): still runs the tests', "tests-before-done.py", t,
