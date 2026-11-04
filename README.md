@@ -20,6 +20,8 @@ cp -r wsai-skill-set/skills/wsai-skill-set ~/.claude/skills/ && cp wsai-skill-se
 | [`ssh-key-audit`](skills/ssh-key-audit/SKILL.md) | Read-only audit of the SSH keys on your GitHub account: which keys at `github.com/<you>.keys` have no `.pub` file on this machine, and which are DSA or RSA under 3072 bits. Changes nothing. 66 offline cases in `tests/test_ssh_key_audit.py`. |
 | [`wsai-skill-set`](skills/wsai-skill-set/SKILL.md) | Gives your agent 55+ tested shortcuts: change-one-word GitHub URLs, repo-to-AI-context tools, terminal one-liners. |
 
+The five skills from our Short, ours plus Anthropic's skill-creator and slack-gif-creator, with one install block: [`docs/five-skills.md`](docs/five-skills.md).
+
 ## Agents (Claude Code subagents)
 
 ```bash
@@ -40,6 +42,10 @@ mkdir -p .claude/agents && cp wsai-skill-set/agents/repro-reviewer/repro-reviewe
 
 [`templates/claude-code-memory/`](templates/claude-code-memory/): copy-paste CLAUDE.md, AGENTS.md, SKILL.md and a
 PreToolUse hook (`block-dangerous.sh` blocks recursive force-deletes of `/`, `~`, `*` and `.`, force-pushes, and shell commands that mention `.env`; 143 cases in `tests/test_hook.py`, including quoting tricks, long flags and `bash -c`) plus a `permissions.deny` rule so the Read tool cannot open `.env` either.
+
+## Hooks
+
+[`hooks/`](hooks/): five Claude Code hooks that stop expensive mistakes: block-dangerous (hook 1, from the template above), secret-scan, big-file-guard, tests-before-done and env-guard, with one `settings.json` that registers all five. Each one blocked a real Claude Code session on test data; 51 offline cases in `tests/test_hooks.py`.
 
 ## Loops
 
