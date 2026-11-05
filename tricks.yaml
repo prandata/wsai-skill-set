@@ -630,6 +630,7 @@ tricks:
   title: Examples for any command
   try: curl cheat.sh/tar
   reader: Ready-to-copy examples in your terminal.
+  last_fail: 2026-11-05 HTTP 500
 - id: T37
   name: Weather in the terminal
   category: terminal
