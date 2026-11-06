@@ -50,13 +50,13 @@ git pushes, a dry run first. The sample was run twice, the first run interrupted
 
 ## The trick list
 
-[`tricks.yaml`](tricks.yaml): every trick with how to use it, what you get, status and the date it was last checked.
-A GitHub Action re-checks every link each morning ([`scripts/verify.py`](scripts/verify.py)); two failures in a row
-mark a trick `broken`.
+[`tricks.yaml`](tricks.yaml): every trick with a pattern or label (`how`), the URL or command (`try`), what you get, status and the date it was last checked.
+A GitHub Action re-checks every `check_url` each morning ([`scripts/verify.py`](scripts/verify.py)) and rebuilds [`newsletter/full-list.md`](newsletter/full-list.md). Two failures in a row
+mark a trick `broken`, and the rebuilt list leaves it out. The Action does not rebuild [`newsletter/issue-01.md`](newsletter/issue-01.md).
 
 ## Contribute
 
-Add a trick to `tricks.yaml` with `status: partial` and a `check_url`, and open a PR. We promote it to `verified` once
+Add a trick to `tricks.yaml` with `status: partial`, a `check_url` and a `try` (the URL or command), and open a PR. We promote it to `verified` once
 we've seen it work in a browser. Claims need a source.
 
 ## How this is made
