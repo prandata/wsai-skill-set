@@ -18,7 +18,7 @@ cp -r wsai-skill-set/skills/wsai-skill-set ~/.claude/skills/ && cp wsai-skill-se
 |---|---|
 | [`claude-code-memory`](skills/claude-code-memory/SKILL.md) | Sets up the four files that stop Claude Code forgetting your project: CLAUDE.md, AGENTS.md, a skill, and a hook that blocks dangerous commands. |
 | [`ssh-key-audit`](skills/ssh-key-audit/SKILL.md) | Read-only audit of the SSH keys on your GitHub account: which keys at `github.com/<you>.keys` have no `.pub` file on this machine, and which are DSA or RSA under 3072 bits. Changes nothing. 66 offline cases in `tests/test_ssh_key_audit.py`. |
-| [`wsai-skill-set`](skills/wsai-skill-set/SKILL.md) | Gives your agent 55+ tested shortcuts: change-one-word GitHub URLs, repo-to-AI-context tools, terminal one-liners. |
+| [`wsai-skill-set`](skills/wsai-skill-set/SKILL.md) | Gives your agent the tested shortcuts in `tricks.yaml` (verified and behaviour; 54 in the list rebuilt on 7 Nov 2026): change-one-word GitHub URLs, repo-to-AI-context tools, terminal one-liners. |
 
 ## Agents (Claude Code subagents)
 
@@ -50,13 +50,14 @@ git pushes, a dry run first. The sample was run twice, the first run interrupted
 
 ## The trick list
 
-[`tricks.yaml`](tricks.yaml): every trick with how to use it, what you get, status and the date it was last checked.
-A GitHub Action re-checks every link each morning ([`scripts/verify.py`](scripts/verify.py)); two failures in a row
-mark a trick `broken`.
+[`tricks.yaml`](tricks.yaml): every trick with a pattern or label (`how`), the URL or command (`try`), what you get, status and the date it was last checked.
+A GitHub Action re-checks every `check_url` each morning ([`scripts/verify.py`](scripts/verify.py)) and rebuilds [`newsletter/full-list.md`](newsletter/full-list.md). Two failures in a row
+mark a trick `broken`, and the rebuilt list leaves it out. The Action does not rebuild [`newsletter/issue-01.md`](newsletter/issue-01.md).
+The 7 Nov 2026 list has 54 shortcuts. Git History (T10) is `broken` and left out. The list intro still says the video showed five links; that sentence is hardcoded in [`scripts/build_newsletter.py`](scripts/build_newsletter.py), and four of those links remain (gitdiagram, gitingest, OSS Insight, github1s).
 
 ## Contribute
 
-Add a trick to `tricks.yaml` with `status: partial` and a `check_url`, and open a PR. We promote it to `verified` once
+Add a trick to `tricks.yaml` with `status: partial`, a `check_url` and a `try` (the URL or command), and open a PR. We promote it to `verified` once
 we've seen it work in a browser. Claims need a source.
 
 ## How this is made

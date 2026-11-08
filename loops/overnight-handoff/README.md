@@ -17,7 +17,7 @@ saved progress, clear permissions and a safe way to resume, not a longer prompt.
 | [`demo.sh`](demo.sh) | Runs the sample twice: run 1 interrupted, run 2 resumes. Logs in [`sample/logs/`](sample/logs/). |
 
 Needs Python 3.9 or later (standard library only) and Claude Code v2.1.259 or later, signed in.
-Offline tests: `python3 tests/test_overnight_handoff.py` from the repo root (47 cases, a fake
+Offline tests: `python3 tests/test_overnight_handoff.py` from the repo root (58 cases, a fake
 `claude`, no spend).
 
 ## 5-minute setup
@@ -91,7 +91,7 @@ not one of the three values; Run is not a whole number; Updated is not an ISO 86
 sections are missing, repeated, out of order or joined by another section; State is empty; a line
 under Done, Next or Open questions is not a `- ` item; a section has no items; Status is
 `in-progress` with nothing under Next; Status is `blocked` with no question; a `{{placeholder}}` is
-left; or the file is over 150 lines or 16 KB (a handoff that keeps growing is turning into a transcript).
+left; or the file is over 150 lines or 16,000 bytes (a handoff that keeps growing is turning into a transcript).
 
 Only the four exact headings (`## State`, `## Done`, `## Next`, `## Open questions`) start a section.
 Any other line that begins with `## ` is text: State is free prose, and a sentence that wraps onto a
