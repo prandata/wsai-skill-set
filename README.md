@@ -18,7 +18,7 @@ cp -r wsai-skill-set/skills/wsai-skill-set ~/.claude/skills/ && cp wsai-skill-se
 |---|---|
 | [`claude-code-memory`](skills/claude-code-memory/SKILL.md) | Sets up the four files that stop Claude Code forgetting your project: CLAUDE.md, AGENTS.md, a skill, and a hook that blocks dangerous commands. |
 | [`ssh-key-audit`](skills/ssh-key-audit/SKILL.md) | Read-only audit of the SSH keys on your GitHub account: which keys at `github.com/<you>.keys` have no `.pub` file on this machine, and which are DSA or RSA under 3072 bits. Changes nothing. 66 offline cases in `tests/test_ssh_key_audit.py`. |
-| [`wsai-skill-set`](skills/wsai-skill-set/SKILL.md) | Gives your agent 55+ tested shortcuts: change-one-word GitHub URLs, repo-to-AI-context tools, terminal one-liners. |
+| [`wsai-skill-set`](skills/wsai-skill-set/SKILL.md) | Gives your agent the verified and behaviour shortcuts in `tricks.yaml` (55 in the list rebuilt on 8 Nov 2026): change-one-word GitHub URLs, repo-to-AI-context tools, terminal one-liners. |
 
 ## Agents (Claude Code subagents)
 
@@ -50,13 +50,15 @@ git pushes, a dry run first. The sample was run twice, the first run interrupted
 
 ## The trick list
 
-[`tricks.yaml`](tricks.yaml): every trick with how to use it, what you get, status and the date it was last checked.
-A GitHub Action re-checks every link each morning ([`scripts/verify.py`](scripts/verify.py)); two failures in a row
-mark a trick `broken`.
+[`tricks.yaml`](tricks.yaml): every trick has a pattern or label (`how`), the URL or command the list prints (`try`), what you get, a status and the date a check last succeeded.
+A GitHub Action re-checks every `check_url` each morning ([`scripts/verify.py`](scripts/verify.py)) and rebuilds [`newsletter/full-list.md`](newsletter/full-list.md). [`newsletter/issue-01.md`](newsletter/issue-01.md) stays as published.
+A failure records `last_fail` and leaves the status as it is. The next failed check, while `last_fail` is still set, marks the trick `broken`, and the rebuilt list leaves it out. One later success clears `last_fail` and, when the status was `broken`, sets the status to `verified`.
+On 8 Nov 2026 the published list has 55 shortcuts: 50 `verified` and 5 `behaviour`. ghloc (T08) is `broken` after HTTP 402 and is left out. Five `partial` tricks are under "Testing next". The five `behaviour` tricks have no `check_url`, so their `checked` date is still 2026-10-30. The list's "tested on" line uses the `updated` date in `tricks.yaml`.
+The intro still says the video showed five links. That sentence, the five names, and the closing line about turning the list into a Claude skill are hardcoded in [`scripts/build_newsletter.py`](scripts/build_newsletter.py). On 8 Nov 2026 all five video links are in the list. The skill itself is [`skills/wsai-skill-set/`](skills/wsai-skill-set/SKILL.md).
 
 ## Contribute
 
-Add a trick to `tricks.yaml` with `status: partial` and a `check_url`, and open a PR. We promote it to `verified` once
+Add a trick to `tricks.yaml` with `status: partial`, a `title`, a `try` (the URL or command) and a `check_url`, and open a PR. The newsletter build prints `title` and `try` for a partial trick. We promote it to `verified` once
 we've seen it work in a browser. Claims need a source.
 
 ## How this is made
