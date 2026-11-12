@@ -7,7 +7,7 @@ description: Tested shortcuts for people building with AI - change-one-word GitH
 
 The list lives in `tricks.yaml` next to this file (copy it in, or point at the repo checkout). Each entry has:
 `try` (the URL or command to give the user), `how` (the URL pattern, or a short label when there is no URL, such as `Console command`), `you_get`,
-`status` (`verified`, `partial`, `behaviour`, `broken`), `checked` (the last date `check_url` returned success), `sign_in`,
+`status` (`verified`, `partial`, `behaviour`, `broken`), `checked` (the last verification date; for a trick with a `check_url`, the last date that URL returned success), `sign_in`,
 and an optional `note` with caveats. The published numbered list prints `title`, `try` and `reader` for `verified` and `behaviour` tricks.
 `partial` tricks are under "Testing next" in `newsletter/full-list.md`. `broken` tricks are left out.
 `behaviour` tricks have no `check_url`, so the scheduled check does not refresh their `checked` date.

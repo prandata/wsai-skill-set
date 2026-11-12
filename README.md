@@ -50,7 +50,7 @@ git pushes, a dry run first. The sample was run twice, the first run interrupted
 
 ## The trick list
 
-[`tricks.yaml`](tricks.yaml): every trick has a pattern or label (`how`), the URL or command the list prints (`try`), what you get, a status and the date a check last succeeded (`checked`).
+[`tricks.yaml`](tricks.yaml): every trick has a pattern or label (`how`), the URL or command the list prints (`try`), what you get, a status and `checked` (for a trick with a `check_url`, the date that URL last returned success; behaviour tricks have no `check_url` and keep a manual date).
 A scheduled GitHub Action ([`.github/workflows/verify.yml`](.github/workflows/verify.yml)) runs [`scripts/verify.py`](scripts/verify.py) on every `check_url`, then rebuilds [`newsletter/full-list.md`](newsletter/full-list.md). [`newsletter/issue-01.md`](newsletter/issue-01.md) stays as published.
 A failed check records `last_fail` and leaves the status as it is. The next failed check, while `last_fail` is still set, marks the trick `broken`, and the rebuilt list leaves it out. One later success clears `last_fail` and, when the status was `broken`, sets the status to `verified`.
 On 12 Nov 2026 the published list has 55 shortcuts: 50 `verified` and 5 `behaviour`. T08 (Count a repo's lines of code, `ghloc.vercel.app`) is `broken`; `last_fail` is `2026-11-12 HTTP 402`, and `checked` is still 2026-10-30 because a failed check does not change `checked`. Five `partial` tricks are under "Testing next". The five `behaviour` tricks (T55 to T59) have no `check_url`, so their `checked` date is still 2026-10-30. The list's "tested on" line uses the `updated` date in `tricks.yaml` (`2026-11-12`), the date of that run.
