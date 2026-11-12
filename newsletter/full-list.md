@@ -1,6 +1,6 @@
 [[META]]
 Title: 55 shortcuts for AI builders.
-Subtitle: Repos, AI context, terminal and browser tricks. Every one tested on 10 Nov 2026.
+Subtitle: Repos, AI context, terminal and browser tricks. Every one tested on 12 Nov 2026.
 Audience: everyone
 Email: do not send
 Cover / social image: assets/cover.png
@@ -47,7 +47,7 @@ Save this post. You will need it the day you open a strange repo.
 
 ## How we test.
 
-Every link was checked on 10 Nov 2026 against one public repo, `pallets/click`. Swap in your own `owner/repo`.
+Every link was checked on 12 Nov 2026 against one public repo, `pallets/click`. Swap in your own `owner/repo`.
 
 ==A page loading is not the same as a trick working.== Before a trick goes in a video, we run it in a browser.
 
