@@ -6,18 +6,21 @@ description: Tested shortcuts for people building with AI - change-one-word GitH
 # What Survives in AI: Skill Set
 
 The list lives in `tricks.yaml` next to this file (copy it in, or point at the repo checkout). Each entry has:
-`how` (the URL or command), `you_get`, `status` (verified, partial, behaviour, broken), `checked` (last date it served),
-`sign_in`, and an optional `note` with caveats.
+`try` (the URL or command to give the user), `how` (the URL pattern, or a short label when there is no URL, such as `Console command`), `you_get`,
+`status` (`verified`, `partial`, `behaviour`, `broken`), `checked` (the last date `check_url` returned success), `sign_in`,
+and an optional `note` with caveats. The published numbered list prints `title`, `try` and `reader` for `verified` and `behaviour` tricks.
+`partial` tricks are under "Testing next" in `newsletter/full-list.md`. `broken` tricks are left out.
+`behaviour` tricks have no `check_url`, so the scheduled check does not refresh their `checked` date.
 
 ## How to use it
 
 1. Read `tricks.yaml` and pick by the user's need, using `category`:
-   - `understand-a-repo`: diagrams, digests, in-browser editors, file history, forks.
-   - `feed-your-ai`: pack a repo or docs into AI context (gitingest, repomix, context7, gitmcp).
+   - `understand-a-repo`: diagrams, digests (gitingest is T02), in-browser editors, file history, forks.
+   - `feed-your-ai`: pack a repo or docs into AI context (gitmcp, context7, repomix).
    - `hidden-github-urls`: .patch, .diff, .keys, blame, compare, feeds.
    - `notebooks-and-packages`, `terminal`, `builder-tools`, `browser`.
-2. Prefer `verified`. Say so when you suggest a `partial` one. Never suggest `broken`.
-3. Swap the user's `owner/repo` into the URL. Fetch it yourself when you can, rather than only naming it.
+2. Prefer `verified`. Suggest `behaviour` too: the numbered list counts those with the verified tricks. They are browser actions with no page to fetch. Say so when you suggest a `partial` one. Never suggest `broken`.
+3. Give them `try` and, when it is filled in, `reader`. Swap the user's `owner/repo` into the URL. Fetch it yourself when you can, rather than only naming it.
 4. Repeat any `note` (for example, ossinsight's growth charts undercount since March 2026).
 5. If a trick fails for you, tell the user and note it, so the maintainer can re-check it.
 
