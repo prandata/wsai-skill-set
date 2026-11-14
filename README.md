@@ -18,7 +18,7 @@ cp -r wsai-skill-set/skills/wsai-skill-set ~/.claude/skills/ && cp wsai-skill-se
 |---|---|
 | [`claude-code-memory`](skills/claude-code-memory/SKILL.md) | Sets up the four files that stop Claude Code forgetting your project: CLAUDE.md, AGENTS.md, a skill, and a hook that blocks dangerous commands. |
 | [`ssh-key-audit`](skills/ssh-key-audit/SKILL.md) | Read-only audit of the SSH keys on your GitHub account: which keys at `github.com/<you>.keys` have no `.pub` file on this machine, and which are DSA or RSA under 3072 bits. Changes nothing. 66 offline cases in `tests/test_ssh_key_audit.py`. |
-| [`wsai-skill-set`](skills/wsai-skill-set/SKILL.md) | Gives your agent the verified and behaviour shortcuts in `tricks.yaml` (55 in the list rebuilt on 14 Nov 2026): change-one-word GitHub URLs, repo-to-AI-context tools, terminal one-liners. |
+| [`wsai-skill-set`](skills/wsai-skill-set/SKILL.md) | Gives your agent the shortcuts in `tricks.yaml`. The list rebuilt on 14 Nov 2026 has 55 verified and behaviour tricks; a `partial` one may be suggested if it is labelled partial, and a `broken` one is never suggested. Change-one-word GitHub URLs, repo-to-AI-context tools, terminal one-liners. |
 
 ## Agents (Claude Code subagents)
 
