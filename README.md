@@ -18,7 +18,7 @@ cp -r wsai-skill-set/skills/wsai-skill-set ~/.claude/skills/ && cp wsai-skill-se
 |---|---|
 | [`claude-code-memory`](skills/claude-code-memory/SKILL.md) | Sets up the four files that stop Claude Code forgetting your project: CLAUDE.md, AGENTS.md, a skill, and a hook that blocks dangerous commands. |
 | [`ssh-key-audit`](skills/ssh-key-audit/SKILL.md) | Read-only audit of the SSH keys on your GitHub account: which keys at `github.com/<you>.keys` have no `.pub` file on this machine, and which are DSA or RSA under 3072 bits. Changes nothing. 66 offline cases in `tests/test_ssh_key_audit.py`. |
-| [`wsai-skill-set`](skills/wsai-skill-set/SKILL.md) | Gives your agent 55+ tested shortcuts: change-one-word GitHub URLs, repo-to-AI-context tools, terminal one-liners. |
+| [`wsai-skill-set`](skills/wsai-skill-set/SKILL.md) | Gives your agent the verified and behaviour shortcuts in `tricks.yaml` (55 in the list rebuilt on 12 Nov 2026): change-one-word GitHub URLs, repo-to-AI-context tools, terminal one-liners. |
 
 ## Agents (Claude Code subagents)
 
@@ -39,7 +39,7 @@ mkdir -p .claude/agents && cp wsai-skill-set/agents/repro-reviewer/repro-reviewe
 ## Templates
 
 [`templates/claude-code-memory/`](templates/claude-code-memory/): copy-paste CLAUDE.md, AGENTS.md, SKILL.md and a
-PreToolUse hook (`block-dangerous.sh` blocks recursive force-deletes of `/`, `~`, `*` and `.`, force-pushes, and shell commands that mention `.env`; 143 cases in `tests/test_hook.py`, including quoting tricks, long flags and `bash -c`) plus a `permissions.deny` rule so the Read tool cannot open `.env` either.
+PreToolUse hook (`block-dangerous.sh` blocks recursive force-deletes of `/`, `~`, `*` and `.`, force-pushes, and shell commands that mention `.env`; 143 command cases in `tests/hook_cases.json`, 100 that must exit 2 and 43 that must exit 0, run by `tests/test_hook.py`, including quoting tricks, long flags and `bash -c`) plus a `permissions.deny` rule so the Read tool cannot open `.env` either.
 
 ## Loops
 
@@ -50,13 +50,15 @@ git pushes, a dry run first. The sample was run twice, the first run interrupted
 
 ## The trick list
 
-[`tricks.yaml`](tricks.yaml): every trick with how to use it, what you get, status and the date it was last checked.
-A GitHub Action re-checks every link each morning ([`scripts/verify.py`](scripts/verify.py)); two failures in a row
-mark a trick `broken`.
+[`tricks.yaml`](tricks.yaml): every trick has a pattern or label (`how`), the URL or command the list prints (`try`), what you get, a status and `checked` (for a trick with a `check_url`, the date that URL last returned success; behaviour tricks have no `check_url` and keep a manual date).
+A scheduled GitHub Action ([`.github/workflows/verify.yml`](.github/workflows/verify.yml)) runs [`scripts/verify.py`](scripts/verify.py) on every `check_url`, then rebuilds [`newsletter/full-list.md`](newsletter/full-list.md). [`newsletter/issue-01.md`](newsletter/issue-01.md) stays as published.
+A failed check records `last_fail` and leaves the status as it is. The next failed check, while `last_fail` is still set, marks the trick `broken`, and the rebuilt list leaves it out. One later success clears `last_fail` and, when the status was `broken`, sets the status to `verified`.
+On 12 Nov 2026 the published list has 55 shortcuts: 50 `verified` and 5 `behaviour`. T08 (Count a repo's lines of code, `ghloc.vercel.app`) is `broken`; `last_fail` is `2026-11-12 HTTP 402`, and `checked` is still 2026-10-30 because a failed check does not change `checked`. Five `partial` tricks are under "Testing next". The five `behaviour` tricks (T55 to T59) have no `check_url`, so their `checked` date is still 2026-10-30. The list's "tested on" line uses the `updated` date in `tricks.yaml` (`2026-11-12`), the date of that run.
+The intro still says the video showed five links. That sentence, the five names, and the closing line about turning the list into a Claude skill are hardcoded in [`scripts/build_newsletter.py`](scripts/build_newsletter.py). On 12 Nov 2026 all five video links (T01, T02, T04, T09, T10) are in the list. The skill itself is [`skills/wsai-skill-set/`](skills/wsai-skill-set/SKILL.md).
 
 ## Contribute
 
-Add a trick to `tricks.yaml` with `status: partial` and a `check_url`, and open a PR. We promote it to `verified` once
+Add a trick to `tricks.yaml` with `status: partial`, a `title`, a `try` (the URL or command) and a `check_url`, and open a PR. The newsletter build prints `title` and `try` for a partial trick. We promote it to `verified` once
 we've seen it work in a browser. Claims need a source.
 
 ## How this is made
