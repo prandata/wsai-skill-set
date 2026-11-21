@@ -237,6 +237,7 @@ tricks:
   title: Add .patch to a commit
   try: github.com/pallets/click/commit/main.patch
   reader: The commit as a plain patch.
+  last_fail: 2026-11-21 HTTP 503
 - id: T14
   name: .diff on a PR
   category: hidden-github-urls
@@ -618,7 +619,7 @@ tricks:
   category: terminal
   how: curl cheat.sh/tar
   you_get: Instant tar examples
-  status: verified
+  status: broken
   checked: '2026-11-20'
   evidence: yes, 30 Oct, curl output
   sign_in: 'no'
@@ -630,7 +631,7 @@ tricks:
   title: Examples for any command
   try: curl cheat.sh/tar
   reader: Ready-to-copy examples in your terminal.
-  last_fail: 2026-11-21 HTTP 500
+  last_fail: 2026-11-21 HTTP 0
 - id: T37
   name: Weather in the terminal
   category: terminal
