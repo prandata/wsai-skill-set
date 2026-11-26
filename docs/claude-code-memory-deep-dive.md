@@ -486,7 +486,8 @@ Full files: `examples/good/dot-claude/settings.json` with `examples/good/dot-cla
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.sh"
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.sh",
+            "onFailure": "block"
           }
         ]
       }
